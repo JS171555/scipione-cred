@@ -8,11 +8,12 @@ function cspPlugin(env) {
   const csp = [
     "default-src 'self'",
     "script-src 'self'",
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' data: https://fonts.gstatic.com",
+    "style-src 'self' 'unsafe-inline'",
+    "font-src 'self' data:",
     `img-src 'self' data: blob: ${origem}`.trim(),
     `connect-src 'self' ${origem} ${ws} https://viacep.com.br`.replace(/\s+/g, ' ').trim(),
-    "object-src 'none'", "base-uri 'self'", "form-action 'self'", "frame-ancestors 'none'",
+    // frame-ancestors exige cabeçalho HTTP; veja public/_headers e docs/hospedagem.md.
+    "object-src 'none'", "base-uri 'self'", "form-action 'self'",
   ].join('; ');
   return {
     name: 'scipione-csp', apply: 'build',

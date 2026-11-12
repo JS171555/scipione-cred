@@ -14,6 +14,9 @@ import { renderDevedorDetalhe } from './modules/devedor-detalhe.js';
 import { renderDividaForm } from './modules/divida-form.js';
 import { renderPagamentoForm } from './modules/pagamento-form.js';
 import { renderConfigPendente } from './modules/config-pendente.js';
+import { renderListaDividas } from './modules/dividas-lista.js';
+import { renderListaPagamentos } from './modules/pagamentos-lista.js';
+import { renderSelecionarDivida, renderSelecionarPagamento } from './modules/selecionar-registro.js';
 import { iniciarTerminologiaClientes } from './core/terminologia.js';
 
 defineCustomElements(window);
@@ -39,9 +42,22 @@ if (!diagnostico.ok) {
       '/devedores/:id': { render: renderDevedorDetalhe },
       '/devedores/:id/editar': { render: renderDevedorForm },
       '/devedores/:id/dividas/nova': { render: renderDividaForm },
+      '/dividas': { render: renderListaDividas },
+      '/dividas/nova': { render: renderSelecionarDivida },
+      '/pagamentos': { render: renderListaPagamentos },
+      '/pagamentos/novo': { render: renderSelecionarPagamento },
       '/dividas/:dividaId/editar': { render: renderDividaForm },
       '/dividas/:dividaId/pagamento': { render: renderPagamentoForm },
       '/404': { render: () => navegar('/') },
     },
+  });
+}
+
+// Instalável sem cache offline: nunca interceptar API, Storage ou dados privados.
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+      // A aplicação web segue funcional se o navegador bloquear a PWA.
+    });
   });
 }

@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import { pathToFileURL } from 'node:url';
+import { writeFile, mkdir } from 'node:fs/promises';
+const modulePath=process.env.PLAYWRIGHT_MODULE;
+const {chromium}=await import(modulePath?pathToFileURL(modulePath).href:'playwright');
+const origin=process.env.UI_TEST_URL||'http://127.0.0.1:4173';
+const out=process.env.UI_TEST_OUTPUT||'.visual-test';
+await mkdir(out,{recursive:true});
+const browser=await chromium.launch({executablePath:process.env.CHROMIUM_BIN||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
+const page=await browser.newPage({viewport:{width:390,height:844}});
+const errors=[];const warnings=[];
+page.on('pageerror',e=>errors.push(e.message));
+page.on('console',m=>{if(m.type()==='error')errors.push(m.text());if(m.type()==='warning')warnings.push(m.text());});
+await page.goto(origin);
+await page.waitForSelector('#auth-title');
+assert((await page.locator('body').innerText()).includes('Configuração pendente'));
+assert.equal(await page.locator('input[type="password"]').count(),0,'Configuração ausente não libera login nem dados');
+for(const file of ['/manifest.webmanifest','/icons/icon-192.png','/icons/icon-512.png','/sw.js','/fonts/dm-sans.css','/fonts/cormorant-garamond.css']){
+ const response=await page.request.get(origin+file);assert.equal(response.status(),200,file);
+}
+await page.evaluate(()=>navigator.serviceWorker.ready);
+const privacy=await page.evaluate(async()=>({cacheNames:await caches.keys(),storageKeys:Object.keys(localStorage)}));
+assert.equal(privacy.cacheNames.length,0,'Não pode haver cache de dados privados');
+assert.equal(privacy.storageKeys.length,0,'Não armazenar informações sem sessão');
+await page.evaluate(()=>document.fonts.ready);
+await page.screenshot({path:`${out}/configuracao-producao-390.png`,fullPage:true});
+await writeFile(`${out}/production-results.json`,JSON.stringify({errors,warnings,privacy,manifest:'200',icons:'200',serviceWorker:'active'},null,2));
+await browser.close();
+assert.equal(errors.length,0,errors.join('\n'));
+console.log('Produção sem configuração: proteção OK; manifest/ícones/fontes HTTP 200; service worker ativo, zero cache e zero dados no localStorage.');
+if(warnings.length)console.log('Warnings:',warnings);

@@ -1,28 +1,35 @@
 import { solicitarRecuperacao } from '../services/auth.js';
 import { traduzirErro } from '../core/errors.js';
 import { $, mostrarMensagem, ocupado } from '../core/dom.js';
+import { montarAuth } from '../components/auth-layout.js';
 
 export function renderRecuperar(raiz) {
-  raiz.innerHTML = `
-    <main class="auth">
-      <h1>Recuperar senha</h1>
-      <form id="form" novalidate>
-        <label>E-mail <input id="email" type="email" autocomplete="username" required></label>
-        <p class="msg" id="msg" role="status" hidden></p>
-        <button type="submit">Enviar link de recuperação</button>
-      </form>
-      <p><a href="#/login">Voltar ao login</a></p>
-    </main>`;
-  $('#form').addEventListener('submit', async (ev) => {
+  montarAuth(raiz, {
+    eyebrow: 'Recuperação segura',
+    title: 'Recupere o acesso.',
+    description: 'Informe seu e-mail administrativo. A resposta é sempre discreta para proteger sua conta.',
+    content: `<form id="form" class="form-panel-form" novalidate>
+        <div class="field"><label for="email">E-mail
+          <input id="email" type="email" autocomplete="username" inputmode="email" required aria-describedby="email-erro">
+        </label><p class="erro-campo" id="email-erro" role="alert" hidden></p></div>
+        <p class="msg" id="msg" role="status" aria-live="polite" hidden></p>
+        <button type="submit" class="btn-primary">Enviar link de recuperação</button>
+      </form>`,
+    footer: '<a href="#/login">Voltar ao login</a>',
+  });
+  const form = $('#form', raiz); const email = $('#email', raiz); const erro = $('#email-erro', raiz); const msg = $('#msg', raiz);
+  email.addEventListener('input', () => { email.removeAttribute('aria-invalid'); erro.hidden = true; erro.textContent = ''; });
+  form.addEventListener('submit', async (ev) => {
     ev.preventDefault();
-    const email = $('#email').value.trim();
-    if (!email) return mostrarMensagem($('#msg'), 'Informe o e-mail.');
-    const botao = $('button[type=submit]');
+    email.removeAttribute('aria-invalid'); erro.hidden = true; erro.textContent = ''; mostrarMensagem(msg, '');
+    const valor = email.value.trim();
+    if (!valor) { email.setAttribute('aria-invalid', 'true'); erro.hidden = false; erro.textContent = 'Informe o e-mail.'; email.focus(); return; }
+    const botao = form.querySelector('button[type=submit]');
     ocupado(botao, true, 'Enviando…');
     try {
-      await solicitarRecuperacao(email);
-      mostrarMensagem($('#msg'), 'Se o e-mail estiver cadastrado, você receberá um link para redefinir a senha. Abra-o neste mesmo navegador.', 'ok');
-    } catch (e) { mostrarMensagem($('#msg'), traduzirErro(e)); }
+      await solicitarRecuperacao(valor);
+      mostrarMensagem(msg, 'Se o e-mail estiver cadastrado, você receberá um link para redefinir a senha. Abra-o neste mesmo navegador.', 'ok');
+    } catch (e) { mostrarMensagem(msg, traduzirErro(e)); }
     finally { ocupado(botao, false); }
   });
 }
