@@ -56,6 +56,13 @@ export async function definirFoto(id, file, fotoAnterior = null) {
   return up.path;
 }
 
+/** Remove a referência da foto sob a política do cadastro; falha de storage não reabre a foto no banco. */
+export async function removerFotoDoCadastro(id, fotoPath = null) {
+  const { error } = await supabase.from('devedores').update({ foto_path: null }).eq('id', id);
+  if (error) throw error;
+  if (fotoPath) await removerFoto(fotoPath).catch(() => {});
+}
+
 export const urlFoto = (path) => urlAssinada('foto', path, 300);
 
 export const ORDENS = {
