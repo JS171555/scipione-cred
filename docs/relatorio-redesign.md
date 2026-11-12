@@ -1,9 +1,12 @@
 # Scipione Cred — relatório de implementação do redesign
 
-**Data:** 12 de novembro de 2026  
-**Repositório:** JS171555/scipione-cred  
-**Base analisada:** `6ffe000` — Fix terminology observer mutation loop  
-**Entrega:** branch `feat/redesign-ui-premium`, para revisão e integração; sem alteração direta de produção.
+**Data:** 12 de novembro de 2026
+
+**Repositório:** JS171555/scipione-cred
+
+**Base analisada:** `6ffe000` — Fix terminology observer mutation loop
+
+**Entrega:** [Pull request #1](https://github.com/JS171555/scipione-cred/pull/1), branch `feat/redesign-ui-premium`, para revisão e integração; sem alteração direta de produção.
 
 ## 1. Resultado
 
@@ -85,7 +88,7 @@ Os testes visuais interceptam os serviços somente no navegador do teste. Não h
 
 ## 7. Problemas encontrados e resolvidos
 
-Foram corrigidos: ausência de navegação financeira global; falta de visão financeira consolidada; tabelas inadequadas no mobile; inconsistencia dos fluxos públicos; falta de feedback de uploads; seleção financeira que retirava o hash da URL; botão de retry de pagamentos que não respondia; buscas truncadas em volumes maiores; caracteres especiais interpolados em filtros; renderizações antigas durante navegação; validação de anexo ainda em andamento no submit; concorrência entre seleções de arquivo; tradução global que alterava dados apresentados; ícones PWA ausentes; e `frame-ancestors` ineficaz em meta CSP.
+Foram corrigidos: ausência de navegação financeira global; falta de visão financeira consolidada; tabelas inadequadas no mobile; inconsistência dos fluxos públicos; falta de feedback de uploads; seleção financeira que retirava o hash da URL; botão de retry de pagamentos que não respondia; buscas truncadas em volumes maiores; caracteres especiais interpolados em filtros; renderizações antigas durante navegação; validação de anexo ainda em andamento no submit; concorrência entre seleções de arquivo; tradução global que alterava dados apresentados; ícones PWA ausentes; e `frame-ancestors` ineficaz em meta CSP.
 
 A proteção `frame-ancestors` foi preparada como cabeçalho HTTP em `public/_headers`, com instruções para o provedor de hospedagem. A CSP de scripts/conexões permanece no build, e a tipografia não exige conexões externas.
 
@@ -189,4 +192,3 @@ A lista completa é apresentada a seguir. As migrations, o modelo financeiro, os
 - `tests/unit/list-services.test.js`
 - `tests/visual/production.mjs`
 - `tests/visual/run.mjs`
-
