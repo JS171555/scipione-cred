@@ -2,7 +2,7 @@ import { esc } from '../core/dom.js';
 import { sair } from '../services/auth.js';
 import { navegar, invalidarNavegacao } from '../core/router.js';
 import { icon } from './icons.js';
-import { confirmar } from './dialogos.js';
+import { confirmar, cartaoPerfil } from './dialogos.js';
 import { adaptarTabelas } from './tabelas.js';
 
 let adminAtual = null;
@@ -60,7 +60,7 @@ export function pagina(raiz, { titulo, descricao = '', voltar = null, admin = ad
   };
   q('#sair').addEventListener('click', logout);
   const perfil = async () => {
-    if (await confirmar(`${nome} — perfil de administrador da Scipione Affare. O acesso é exclusivo e os documentos são privados.`, { confirmarTexto: 'Encerrar sessão' })) await logout();
+    if (await cartaoPerfil({ nome, iniciais, ativo: admin?.ativo !== false })) await logout();
   };
   q('#perfil-admin').addEventListener('click', perfil);
   q('#perfil-mobile').addEventListener('click', perfil);
@@ -69,4 +69,4 @@ export function pagina(raiz, { titulo, descricao = '', voltar = null, admin = ad
   return q('#conteudo');
 }
 
-export const badgeStatus = (s) => `<span class="badge ${esc(s)}"><i aria-hidden="true"></i>${{ ativo: 'Ativo', inativo: 'Inativo', em_aberto: 'Em aberto', quitada: 'Quitada', valido: 'Válido', estornado: 'Estornado' }[s] ?? esc(s)}</span>`;
+export const badgeStatus = (s) => `<span class="badge ${esc(s)}">${{ ativo: 'Ativo', inativo: 'Inativo', em_aberto: 'Em aberto', quitada: 'Quitada', valido: 'Válido', estornado: 'Estornado' }[s] ?? esc(s)}</span>`;

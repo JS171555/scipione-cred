@@ -156,8 +156,7 @@ td a:not(.btn) { color: var(--marfim); text-decoration: none; }
 td a:not(.btn):hover { color: var(--ouro); }
 td .acoes-linha { flex-wrap: nowrap; }
 .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; font-size: 10px; font-weight: 500; border-radius: 20px; white-space: nowrap; color: var(--muted); background: #242320; }
-.badge i { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+.badge { display: inline-flex; align-items: center; padding: 4px 10px; font-size: 10px; font-weight: 500; line-height: 1.4; border-radius: 20px; white-space: nowrap; color: var(--muted); background: #242320; }
 .badge.ativo, .badge.quitada, .badge.valido { color: var(--ok); background: #202A21; }
 .badge.inativo, .badge.estornado { color: var(--erro); background: #2C2220; }
 .badge.em_aberto { color: var(--ouro); background: #2B251B; }
@@ -427,9 +426,9 @@ dd { margin: 0; overflow-wrap: anywhere; }
 .financial-breakdown dd { margin-top: 6px; font-size: 20px; }
 .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
 .card { padding: 15px 16px 17px; gap: 6px; }
-.card .rot { font-size: 10.5px; line-height: 1.35; min-height: 0; padding-right: 22px; }
+.card .rot { font-size: 10.5px; line-height: 1.35; min-height: 0; padding-right: 30px; }
 .card strong { font-size: 25px; }
-.metric-icon { top: 14px; right: 13px; opacity: .55; }
+.metric-icon { top: 13px; right: 13px; opacity: .6; }
 .dashboard-grid { grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); gap: 16px; align-items: stretch; }
 .dashboard-grid .panel { display: flex; flex-direction: column; }
 .dashboard-grid .panel-header { margin-bottom: 12px; }
@@ -440,7 +439,7 @@ dd { margin: 0; overflow-wrap: anywhere; }
 @media (min-width: 1440px) {
   .cards { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .card strong { font-size: 23px; }
-  .card .rot { padding-right: 16px; }
+  .card .rot { padding-right: 26px; }
 }
 @media (max-width: 1023px) {
   .financial-overview { grid-template-columns: 1fr; gap: 16px; padding: 20px; }
@@ -479,4 +478,20 @@ dd { margin: 0; overflow-wrap: anywhere; }
   .auth-story-body { margin: 0; }
   .auth-story-body .auth-eyebrow, .auth-story-copy, .auth-story-rule { display: none; }
   .auth-story-body h2 { margin: 0; font-size: 30px; line-height: 1.12; max-width: 280px; }
+}
+
+/* Perfil do administrador: cartão alinhado no lugar do aviso genérico. */
+.perfil-card { display: flex; flex-direction: column; }
+.perfil-head { display: flex; align-items: center; gap: 14px; }
+.perfil-avatar { flex-shrink: 0; width: 54px; height: 54px; display: grid; place-items: center; border-radius: 50%; background: #242119; border: 1px solid var(--borda); color: var(--ouro); font-size: 15px; font-weight: 500; letter-spacing: .04em; }
+.perfil-ident { flex: 1; min-width: 0; }
+.perfil-ident h2 { margin: 0 0 5px; font-size: 20px; line-height: 1.2; overflow-wrap: anywhere; }
+.perfil-role { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 11px; }
+.perfil-role .icon { color: var(--ouro); }
+.perfil-note { margin: 20px 0 0; padding-top: 18px; border-top: 1px solid var(--borda); font-size: 12px; line-height: 1.6; color: var(--muted); }
+.perfil-card .acoes { margin-top: 22px; }
+@media (max-width: 767px) {
+  .perfil-head { gap: 12px; }
+  .perfil-avatar { width: 48px; height: 48px; font-size: 14px; }
+  .perfil-ident h2 { font-size: 18px; }
 }

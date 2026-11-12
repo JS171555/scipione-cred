@@ -47,3 +47,20 @@ export function pedirTexto(mensagem, { minimo = 3, rotulo = 'Motivo', confirmarT
     ta.focus();
   });
 }
+
+/** Cartão do administrador autenticado. Retorna true quando a sessão deve ser encerrada. */
+export function cartaoPerfil({ nome = 'Administrador', iniciais = '', ativo = true } = {}) {
+  const sigla = iniciais || nome.trim().split(/\s+/).slice(0, 2).map((p) => p[0]).join('').toUpperCase();
+  return abrir(`<div class="perfil-card">
+      <header class="perfil-head"><span class="perfil-avatar" aria-hidden="true">${esc(sigla)}</span>
+        <div class="perfil-ident"><h2 id="dialog-title">${esc(nome)}</h2><span class="perfil-role">${icon('user-round', 14)} Administrador</span></div>
+        <span class="badge ${ativo ? 'ativo' : 'inativo'}">${ativo ? 'Ativo' : 'Inativo'}</span></header>
+      <p class="perfil-note">Perfil de administrador da Scipione Affare. O acesso é exclusivo e os documentos são privados.</p>
+      <div class="acoes"><button type="button" data-n class="sec">Fechar</button><button type="button" data-s>Encerrar sessão</button></div>
+    </div>`,
+  (d, fechar) => {
+    d.querySelector('[data-n]').onclick = () => fechar(false);
+    d.querySelector('[data-s]').onclick = () => fechar(true);
+    d.querySelector('[data-n]').focus();
+  }).then((v) => v === true);
+}
