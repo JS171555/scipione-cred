@@ -49,7 +49,14 @@ export async function renderDevedorForm(raiz, { params, admin, signal } = {}) {
   const fotoAtual = fotoAtualUrl ? `<div class="upload-current"><img src="${esc(fotoAtualUrl)}" alt="Foto atual de ${esc(atual.nome_razao_social)}"><button type="button" class="btn sec peq" data-remover-foto>Remover foto</button></div>` : '<p class="upload-meta">Nenhuma foto cadastrada.</p>';
 
   el.innerHTML = `<form id="form" class="form-panel" novalidate>
-    <div class="form-summary"><span class="auth-eyebrow">${editando ? 'Cadastro existente' : 'Novo cadastro'}</span><strong>${editando ? 'Dados do cliente' : 'Identificação inicial'}</strong><small>Campos com validação local e regras preservadas no banco.</small></div>
+    <div class="form-top">
+      <div class="form-summary"><span class="auth-eyebrow">${editando ? 'Cadastro existente' : 'Novo cadastro'}</span><strong>${editando ? 'Dados do cliente' : 'Identificação inicial'}</strong><small>Campos com validação local e regras preservadas no banco.</small>${editando ? `<p class="profile-link"><a href="#/devedores/${esc(params.id)}">Ver perfil do cliente</a></p>` : ''}</div>
+      <section class="form-photo-card" aria-labelledby="foto-titulo">
+        <h2 class="form-section-title" id="foto-titulo">Foto do cliente</h2>
+        ${editando ? fotoAtual : ''}
+        ${uploadField({ id: 'foto', label: editando ? 'Substituir foto' : 'Selecionar foto', categoria: 'foto', accept: '.png,.jpg,.jpeg,.avif', help: 'PNG, JPG, JPEG ou AVIF · limite conforme configuração.' })}
+      </section>
+    </div>
     <section class="form-section" aria-labelledby="identificacao-titulo">
       <h2 class="form-section-title" id="identificacao-titulo">Identificação</h2>
       <fieldset class="choice-field"><legend>Tipo de pessoa</legend>
@@ -82,11 +89,13 @@ export async function renderDevedorForm(raiz, { params, admin, signal } = {}) {
       <h2 class="form-section-title" id="observacoes-titulo">Observações</h2>
       <label for="observacoes">Notas internas<textarea id="observacoes" name="observacoes" rows="4" aria-describedby="observacoes-erro">${esc(valorAtual(atual, 'observacoes'))}</textarea></label><p class="erro-campo" id="observacoes-erro" data-erro="observacoes" role="alert" hidden></p>
     </section>
-    <section class="form-section upload-section" aria-labelledby="anexos-titulo">
-      <div class="section-heading"><div><span class="auth-eyebrow">Privado</span><h2 class="form-section-title" id="anexos-titulo">Foto e documentos</h2></div><small>Opcional · acesso por links temporários</small></div>
-      ${editando ? `<p class="profile-link"><a href="#/devedores/${esc(params.id)}">Ver perfil do cliente</a></p>${fotoAtual}` : ''}
-      ${uploadField({ id: 'foto', label: editando ? 'Substituir foto' : 'Foto do cliente', categoria: 'foto', accept: '.png,.jpg,.jpeg,.avif', help: 'PNG, JPG, JPEG ou AVIF · limite conforme configuração.' })}
-      <div class="form-grid upload-grid"><div class="field"><label for="doc-tipo">Tipo de documento<select id="doc-tipo">${Object.entries(TIPOS_DOCUMENTO).map(([k, v]) => `<option value="${esc(k)}">${esc(v)}</option>`).join('')}</select></label></div>${uploadField({ id: 'docs', label: 'Adicionar documentos', categoria: 'documento', multiple: true, accept: '.png,.jpg,.jpeg,.avif,.webp,.pdf', help: 'PNG, JPG, JPEG, AVIF, WEBP ou PDF · limite conforme configuração.' })}</div>
+    <section class="form-section upload-section" aria-labelledby="documentos-titulo">
+      <div class="section-heading"><h2 class="form-section-title" id="documentos-titulo">Documentos</h2><small>Opcional · acesso por links temporários</small></div>
+      <p class="field-note">Anexe identificação, comprovante de endereço ou outros arquivos do cliente.</p>
+      <div class="docs-grid">
+        <div class="field"><label for="doc-tipo">Tipo de documento<select id="doc-tipo">${Object.entries(TIPOS_DOCUMENTO).map(([k, v]) => `<option value="${esc(k)}">${esc(v)}</option>`).join('')}</select></label></div>
+        ${uploadField({ id: 'docs', label: 'Selecionar documentos', categoria: 'documento', multiple: true, accept: '.png,.jpg,.jpeg,.avif,.webp,.pdf', help: 'PNG, JPG, JPEG, AVIF, WEBP ou PDF · limite conforme configuração.' })}
+      </div>
       ${documentosAtuais}
     </section>
     <p class="msg erro" id="msg" role="alert" aria-live="assertive" hidden></p>
