@@ -14,9 +14,11 @@ import { renderDevedorDetalhe } from './modules/devedor-detalhe.js';
 import { renderDividaForm } from './modules/divida-form.js';
 import { renderPagamentoForm } from './modules/pagamento-form.js';
 import { renderConfigPendente } from './modules/config-pendente.js';
+import { iniciarTerminologiaClientes } from './core/terminologia.js';
 
 defineCustomElements(window);
 const raiz = document.getElementById('app');
+iniciarTerminologiaClientes(raiz);
 
 if (!diagnostico.ok) {
   renderConfigPendente(raiz);
