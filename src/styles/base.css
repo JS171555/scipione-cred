@@ -457,3 +457,26 @@ dd { margin: 0; overflow-wrap: anywhere; }
 }
 .profile-meta { display: flex; flex-wrap: wrap; gap: 8px 22px; color: var(--muted); font-size: 11px; }
 .profile-meta span { overflow-wrap: anywhere; }
+
+/* Login: fotografia institucional — painel lateral no desktop, faixa superior no mobile. */
+.auth-story { position: relative; isolation: isolate; overflow: hidden; }
+.auth-story-media, .auth-story-scrim { position: absolute; inset: 0; z-index: 0; }
+.auth-story-media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: 44% 55%; }
+.auth-story-scrim { background: linear-gradient(180deg, rgba(9, 9, 8, .9) 0%, rgba(9, 9, 8, .46) 38%, rgba(9, 9, 8, .62) 70%, rgba(9, 9, 8, .95) 100%), linear-gradient(90deg, rgba(9, 9, 8, .78) 0%, rgba(9, 9, 8, .28) 62%, rgba(9, 9, 8, .08) 100%); }
+.auth-brand, .auth-story-body, .auth-story > footer { position: relative; z-index: 1; }
+.auth-story-body { text-shadow: 0 1px 22px rgba(0, 0, 0, .5); }
+.auth-story h2, .auth-story p { color: var(--marfim); }
+.auth-story p { color: #d9d2c3; }
+@media (max-width: 1023px) {
+  .auth-story .auth-eyebrow { display: none; }
+}
+@media (max-width: 767px) {
+  .auth-story { height: 252px; padding: 20px 22px 22px; border-bottom: 1px solid var(--borda); }
+  .auth-story-media img { object-position: 52% 60%; }
+  .auth-story-scrim { background: linear-gradient(180deg, rgba(9, 9, 8, .88) 0%, rgba(9, 9, 8, .3) 46%, rgba(9, 9, 8, .92) 100%); }
+  .auth-story .brand { margin: 0; }
+  .auth-story > footer { display: none; }
+  .auth-story-body { margin: 0; }
+  .auth-story-body .auth-eyebrow, .auth-story-copy, .auth-story-rule { display: none; }
+  .auth-story-body h2 { margin: 0; font-size: 30px; line-height: 1.12; max-width: 280px; }
+}
