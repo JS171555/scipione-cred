@@ -1,0 +1,133 @@
+import { pagina, badgeStatus } from '../components/pagina.js';
+import { confirmar, pedirTexto } from '../components/dialogos.js';
+import * as devedores from '../services/devedores.js';
+import * as dividas from '../services/dividas.js';
+import * as pagamentos from '../services/pagamentos.js';
+import * as documentos from '../services/documentos.js';
+import * as auditoria from '../services/auditoria.js';
+import { itemHistorico } from '../components/historico.js';
+import { TIPOS_DOCUMENTO } from '../services/documentos.js';
+import { totaisDevedor } from '../domain/financeiro.js';
+import { formatarDocumento, formatarTelefone, formatarCEP } from '../utils/cpf-cnpj.js';
+import { formatarBRL, formatarCentavos, paraCentavos } from '../utils/money.js';
+import { formatarData, formatarDataHora } from '../utils/dates.js';
+import { formatarTamanho } from '../utils/files.js';
+import { traduzirErro } from '../core/errors.js';
+import { esc, $, mostrarMensagem } from '../core/dom.js';
+import { consumirAviso, definirAviso, navegar } from '../core/router.js';
+
+// Perfil funcional do devedor (Etapa 3). O perfil completo com histórico de movimentações (auditoria) é da Etapa 4.
+const POR_PAGINA_HISTORICO = 10;
+async function abrirUrl(gerar) {
+  const w = window.open('about:blank', '_blank');
+  try { const url = await gerar(); if (w) { w.opener = null; w.location.href = url; } }
+  catch (e) { w?.close(); throw e; }
+}
+
+export async function renderDevedorDetalhe(raiz, { params, admin }) {
+  const id = params.id;
+  const el = pagina(raiz, { titulo: 'Devedor', voltar: { href: '/devedores', texto: 'Devedores' } });
+  const aviso = consumirAviso();
+  const recarregar = () => renderDevedorDetalhe(raiz, { params, admin });
+
+  const [d, listaDividas, listaPagamentos, docs, historico] = await Promise.all([devedores.obter(id), dividas.listarPorDevedor(id), pagamentos.listarPorDevedor(id), documentos.listar(id), auditoria.listarPorDevedor(id, { limite: POR_PAGINA_HISTORICO })]);
+  if (!d) { el.textContent = 'Devedor não encontrado.'; return; }
+  let fotoUrl = null;
+  if (d.foto_path) fotoUrl = await devedores.urlFoto(d.foto_path).catch(() => null);
+
+  const t = totaisDevedor(listaDividas, paraCentavos);
+  const endereco = [d.logradouro, d.numero, d.complemento, d.bairro, [d.cidade, d.uf].filter(Boolean).join('/'), formatarCEP(d.cep)].filter(Boolean).join(', ');
+  const ctxHist = { admin, dividas: new Map(listaDividas.map((v) => [v.id, v.descricao])) };
+  const pagsDe = (dividaId) => listaPagamentos.filter((p) => p.divida_id === dividaId);
+
+  const blocoDivida = (v) => `<section class="divida" data-divida="${esc(v.id)}">
+    <div class="divida-topo"><div><strong>${esc(v.descricao)}</strong> ${badgeStatus(v.status)}<br>
+      <small>Registrada em ${formatarData(v.data_registro)} · Vencimento: ${formatarData(v.data_vencimento)}${v.observacoes ? ` · ${esc(v.observacoes)}` : ''}</small></div>
+      <div class="acoes-linha"><a class="btn peq sec" href="#/dividas/${esc(v.id)}/editar">Editar</a>
+      ${v.status === 'em_aberto' ? `<a class="btn peq" href="#/dividas/${esc(v.id)}/pagamento">Registrar pagamento</a>` : ''}</div></div>
+    <dl class="resumo"><div><dt>Original</dt><dd>${formatarBRL(v.valor_original)}</dd></div><div><dt>Pago</dt><dd>${formatarBRL(v.total_pago)}</dd></div><div><dt>Saldo</dt><dd><strong>${formatarBRL(v.saldo)}</strong></dd></div></dl>
+    ${pagsDe(v.id).length ? `<div class="rolagem"><table class="compacta"><thead><tr><th>Data</th><th class="num">Valor</th><th>Observação</th><th>Situação</th><th></th></tr></thead><tbody>
+      ${pagsDe(v.id).map((p) => `<tr class="${p.status === 'estornado' ? 'estornado' : ''}"><td>${formatarData(p.data_pagamento)}</td><td class="num">${formatarBRL(p.valor)}</td>
+        <td>${esc(p.observacao ?? '')}${p.status === 'estornado' ? `<br><small>Estornado em ${formatarDataHora(p.estornado_em)}: ${esc(p.motivo_estorno)}</small>` : ''}</td>
+        <td>${badgeStatus(p.status)}</td><td class="acoes-linha">${p.comprovante_path ? `<button class="peq sec" data-acao="comprovante" data-path="${esc(p.comprovante_path)}">Comprovante</button>` : ''}
+        ${p.status === 'valido' ? `<button class="peq perigo" data-acao="estornar" data-id="${esc(p.id)}">Estornar</button>` : ''}</td></tr>`).join('')}</tbody></table></div>` : '<p class="vazio">Nenhum pagamento registrado.</p>'}</section>`;
+
+  el.innerHTML = `<p class="msg ok" id="aviso" hidden></p><p class="msg erro" id="msg" role="alert" hidden></p>
+    <section class="cabeca">${fotoUrl ? `<img class="foto" src="${esc(fotoUrl)}" alt="Foto de ${esc(d.nome_razao_social)}">` : '<div class="foto vazia" aria-hidden="true"></div>'}
+      <div><h2>${esc(d.nome_razao_social)} ${badgeStatus(d.status)}</h2><p>${d.tipo_pessoa === 'PJ' ? 'Pessoa jurídica' : 'Pessoa física'} · Cadastrado em ${formatarData(d.created_at)}</p>
+      <div class="acoes-linha"><a class="btn peq" href="#/devedores/${esc(id)}/editar">Editar cadastro</a>
+        <button class="peq sec" data-acao="status">${d.status === 'ativo' ? 'Inativar' : 'Reativar'}</button>
+        <label class="peq btn sec arq">Substituir foto<input id="foto-nova" type="file" accept=".png,.jpg,.jpeg,.avif" hidden></label></div></div></section>
+    <dl class="dados"><div><dt>${d.tipo_pessoa === 'PJ' ? 'CNPJ' : 'CPF'}</dt><dd>${esc(formatarDocumento(d.cpf_cnpj)) || '—'}</dd></div><div><dt>RG</dt><dd>${esc(d.rg) || '—'}</dd></div>
+      <div><dt>Telefone</dt><dd>${esc(formatarTelefone(d.telefone)) || '—'}</dd></div><div><dt>Celular</dt><dd>${esc(formatarTelefone(d.celular)) || '—'}</dd></div>
+      <div><dt>E-mail</dt><dd>${esc(d.email) || '—'}</dd></div><div class="larga"><dt>Endereço</dt><dd>${esc(endereco) || '—'}</dd></div>
+      <div class="larga"><dt>Observações</dt><dd>${esc(d.observacoes) || '—'}</dd></div></dl>
+    <h2>Resumo financeiro</h2>
+    <dl class="resumo"><div><dt>Total registrado</dt><dd>${formatarCentavos(t.registradoC)}</dd></div><div><dt>Total pago</dt><dd>${formatarCentavos(t.pagoC)}</dd></div>
+      <div><dt>Saldo em aberto</dt><dd><strong>${formatarCentavos(t.emAbertoC)}</strong></dd></div><div><dt>Dívidas</dt><dd>${t.abertas} em aberto · ${t.quitadas} quitadas</dd></div></dl>
+    <div class="barra"><h2>Dívidas</h2>${d.status === 'ativo' ? `<a class="btn" href="#/devedores/${esc(id)}/dividas/nova">Nova dívida</a>` : '<small>Reative o cadastro para registrar novas dívidas.</small>'}</div>
+    ${listaDividas.length ? listaDividas.map(blocoDivida).join('') : '<p class="vazio">Nenhuma dívida registrada.</p>'}
+    <h2>Documentos</h2>
+    ${docs.length ? `<ul class="docs">${docs.map((x) => `<li><span>${esc(TIPOS_DOCUMENTO[x.tipo] ?? x.tipo)} — ${esc(x.nome_original)} <small>(${formatarTamanho(x.tamanho_bytes)}, ${formatarData(x.created_at)})</small></span>
+      <span class="acoes-linha"><button class="peq sec" data-acao="ver-doc" data-id="${esc(x.id)}">Ver</button><button class="peq perigo" data-acao="rem-doc" data-id="${esc(x.id)}">Remover</button></span></li>`).join('')}</ul>` : '<p class="vazio">Nenhum documento anexado.</p>'}
+    <div class="grade"><label>Tipo<select id="doc-tipo">${Object.entries(TIPOS_DOCUMENTO).map(([k, v]) => `<option value="${k}">${esc(v)}</option>`).join('')}</select></label>
+      <label>Arquivo (PNG, JPG, JPEG, AVIF, WEBP, PDF)<input id="doc-arq" type="file" accept=".png,.jpg,.jpeg,.avif,.webp,.pdf"></label></div>
+    <button type="button" data-acao="add-doc">Anexar documento</button>
+    <h2>Histórico de movimentações</h2>
+    ${historico.length ? `<ol class="historico" id="historico">${historico.map((m) => itemHistorico(m, ctxHist)).join('')}</ol>` : '<p class="vazio">Nenhuma movimentação registrada.</p>'}
+    ${historico.length === POR_PAGINA_HISTORICO ? '<button type="button" class="sec peq" data-acao="mais-historico">Ver movimentações anteriores</button>' : ''}`;
+  mostrarMensagem($('#aviso'), aviso, 'ok');
+
+  const falha = (e) => mostrarMensagem($('#msg'), traduzirErro(e));
+  const feito = (texto) => { definirAviso(texto); recarregar(); };
+
+  const acoes = {
+    async status() {
+      if (d.status === 'inativo') { await devedores.alterarStatus(id, 'ativo'); return feito('Cadastro reativado.'); }
+      let r = await devedores.alterarStatus(id, 'inativo', false);
+      if (r.requer_confirmacao) {
+        const ok = await confirmar(`Este devedor possui ${r.qtd_dividas_abertas} dívida(s) em aberto, somando ${formatarBRL(r.valor_em_aberto)}. Inativar mesmo assim? O histórico financeiro será preservado.`, { confirmarTexto: 'Inativar' });
+        if (!ok) return;
+        r = await devedores.alterarStatus(id, 'inativo', true);
+      }
+      feito('Cadastro inativado.');
+    },
+    async estornar(alvo) {
+      const motivo = await pedirTexto('O pagamento deixará de contar no saldo, mas continuará no histórico.', { rotulo: 'Motivo do estorno', confirmarTexto: 'Estornar' });
+      if (!motivo) return;
+      await pagamentos.estornar(alvo.dataset.id, motivo);
+      feito('Pagamento estornado.');
+    },
+    async 'mais-historico'(alvo) {
+      const lista = $('#historico');
+      const mais = await auditoria.listarPorDevedor(id, { limite: POR_PAGINA_HISTORICO, offset: lista.children.length });
+      lista.insertAdjacentHTML('beforeend', mais.map((m) => itemHistorico(m, ctxHist)).join(''));
+      if (mais.length < POR_PAGINA_HISTORICO) alvo.remove();
+    },
+    comprovante: (alvo) => abrirUrl(() => pagamentos.urlComprovante(alvo.dataset.path)),
+    'ver-doc': (alvo) => abrirUrl(() => documentos.urlDocumento(docs.find((x) => x.id === alvo.dataset.id))),
+    async 'rem-doc'(alvo) {
+      if (!(await confirmar('Remover este documento? Ele deixará de aparecer no cadastro (a remoção é registrada na auditoria).', { confirmarTexto: 'Remover', perigo: true }))) return;
+      await documentos.remover(alvo.dataset.id);
+      feito('Documento removido.');
+    },
+    async 'add-doc'() {
+      const arq = $('#doc-arq').files[0];
+      if (!arq) return mostrarMensagem($('#msg'), 'Selecione um arquivo para anexar.');
+      await documentos.adicionar(id, $('#doc-tipo').value, arq);
+      feito('Documento anexado.');
+    },
+  };
+  el.addEventListener('click', async (ev) => {
+    const alvo = ev.target.closest('[data-acao]');
+    if (!alvo || !acoes[alvo.dataset.acao]) return;
+    mostrarMensagem($('#msg'), '');
+    alvo.disabled = true;
+    try { await acoes[alvo.dataset.acao](alvo); } catch (e) { falha(e); } finally { alvo.disabled = false; }
+  });
+  $('#foto-nova').addEventListener('change', async (ev) => {
+    const arq = ev.target.files[0];
+    if (!arq) return;
+    try { await devedores.definirFoto(id, arq, d.foto_path); feito('Foto atualizada.'); } catch (e) { falha(e); }
+  });
+}
