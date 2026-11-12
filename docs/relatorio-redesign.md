@@ -22,7 +22,7 @@ A identidade utiliza preto `#080808`, grafite `#171717`, dourado `#B89A62`, marf
 | Recuperação de senha | Formulário consistente, carregamento e mensagem sem revelar a existência de uma conta. |
 | Redefinição de senha | Política existente, confirmação, visibilidade, validação e proteção contra retorno de navegação antiga. |
 | Configuração pendente | Estado seguro e legível quando a configuração Supabase não está disponível; não libera acesso administrativo. |
-| Dashboard | Seis indicadores existentes, total registrado/recebido/saldo em aberto, últimos clientes, dívidas, pagamentos e timeline da operação. |
+| Dashboard | Faixa financeira única (saldo em aberto, total registrado e recebido), seis indicadores em uma linha no desktop e painéis de últimos clientes e atividades recentes com alturas equilibradas. |
 | Clientes | Busca, filtros cadastrais/financeiros, ordenação, paginação, foto privada/iniciais, documento, contato, saldo, perfil e edição. |
 | Cadastro e edição | Seções PF/PJ, RG aplicável, contato, endereço, ViaCEP editável, observações, foto e documentos. Status continua seguindo os fluxos existentes. |
 | Perfil individual | Foto, identificação e contato no cabeçalho, status/data, dados completos, totais, dívidas, pagamentos, estorno, documentos e histórico paginado. |
