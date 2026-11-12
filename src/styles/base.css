@@ -130,12 +130,18 @@ label.inline { display: inline-flex; align-items: center; margin: 0 28px 0 0; mi
 .msg { margin: 16px 0; padding: 12px 16px; font-size: 12px; border-left: 2px solid var(--ouro); background: var(--painel); overflow-wrap: anywhere; }
 .msg.erro { color: var(--erro); border-color: var(--erro); }
 .msg.ok { color: var(--ok); border-color: var(--ok); }
-.upload-field { position: relative; border: 1px dashed #655844; border-radius: 8px; padding: 20px; background: var(--fundo); margin-bottom: 20px; }
-.upload-field .icon { color: var(--ouro); }
-.upload-preview { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 14px; }
-.upload-preview img { max-width: 100%; width: 90px; height: 90px; object-fit: cover; border-radius: 8px; }
-.upload-meta { color: var(--muted); font-size: 11px; overflow-wrap: anywhere; }
-.upload-field label { margin-bottom: 10px; }
+.upload-field { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; width: fit-content; max-width: 100%; padding: 10px 16px 10px 10px; border: 1px dashed #453e32; border-radius: 10px; background: transparent; transition: border-color var(--transition), background var(--transition); }
+.upload-field:hover, .upload-field:focus-within { border-color: #6f6047; background: #141311; }
+.upload-field[data-upload-state="error"] { border-color: var(--erro); }
+.upload-label { display: inline-flex; align-items: center; gap: 10px; margin: 0; min-width: 0; cursor: pointer; }
+.upload-label input[type="file"] { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.upload-icon { display: inline-flex; flex-shrink: 0; width: 30px; height: 30px; align-items: center; justify-content: center; border: 1px solid #3a342a; border-radius: 50%; color: var(--ouro); }
+.upload-title { font-size: 12px; color: var(--marfim); }
+.upload-field:hover .upload-title { color: var(--ouro); }
+.upload-meta { flex-basis: 100%; font-size: 10px; color: var(--muted); overflow-wrap: anywhere; }
+.upload-meta:empty { display: none; }
+.upload-preview { flex-basis: 100%; }
+.upload-preview[hidden], .upload-remove[hidden] { display: none; }
 
 /* Data: quiet tables and mobile cards without losing fields. */
 .barra, .list-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 22px; }
@@ -371,14 +377,14 @@ dd { margin: 0; overflow-wrap: anywhere; }
 .choice-field { display: flex; flex-wrap: wrap; gap: 14px; padding: 16px; }
 .choice { display: flex; align-items: center; margin: 0; min-height: 32px; }
 .field .erro-campo { margin: -12px 0 18px; }
-.upload-label > span { display: block; margin-bottom: 12px; }
-.upload-preview-list { display: flex; flex-wrap: wrap; gap: 14px; width: 100%; }
-.upload-preview-item { display: flex; align-items: center; gap: 14px; min-width: 0; }
-.upload-preview-name { font-size: 12px; overflow-wrap: anywhere; }
-.upload-remove { margin-bottom: 10px; }
+.upload-preview-list { display: flex; flex-wrap: wrap; gap: 6px; width: 100%; }
+.upload-preview-item { display: inline-flex; align-items: center; gap: 8px; min-width: 0; max-width: 100%; padding: 5px 10px; border: 1px solid var(--borda); border-radius: 999px; font-size: 10px; color: var(--muted); }
+.upload-preview-image { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; object-fit: cover; }
+.upload-preview-name { overflow-wrap: anywhere; }
+.upload-remove { margin-left: auto; display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; min-height: 0; padding: 0; border: 1px solid transparent; border-radius: 50%; background: transparent; color: var(--muted); }
+.upload-remove:hover { color: var(--marfim); border-color: var(--borda); }
 .upload-field[data-upload-state="error"] { border-color: var(--erro); }
 .upload-field[data-upload-state="uploading"] .upload-meta::before { content: ''; display: inline-block; width: 12px; height: 12px; border: 1px solid var(--borda); border-top-color: var(--ouro); border-radius: 50%; margin-right: 8px; animation: spin 900ms linear infinite; }
-.upload-current img { width: 80px; height: 80px; border-radius: 8px; object-fit: cover; }
 .profile-section { margin-bottom: 22px; }
 .profile-avatar { flex-shrink: 0; width: 90px; height: 90px; display: grid; place-items: center; border: 1px solid var(--borda); border-radius: 50%; background: #242119; color: var(--ouro); font: 30px var(--font-display); overflow: hidden; }
 .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -486,25 +492,31 @@ dd { margin: 0; overflow-wrap: anywhere; }
 .perfil-card .acoes { margin-top: 24px; }
 .dialogo:has(.perfil-card) { width: min(430px, calc(100vw - 32px)); }
 
-/* Cadastro de cliente: foto no topo e documentos isolados na base. */
-.form-top { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 18px; align-items: stretch; margin-bottom: 26px; }
-.form-top .form-summary { margin: 0; display: flex; flex-direction: column; justify-content: flex-start; }
-.form-top .profile-link { margin: 14px 0 0; font-size: 11px; }
-.form-photo-card { display: flex; flex-direction: column; gap: 12px; padding: 22px; background: #211E18; border: 1px solid var(--borda); border-radius: 8px; }
-.form-photo-card .form-section-title { margin: 0; font-size: 15px; }
-.form-photo-card .upload-field { margin: 0; padding: 16px; }
-.form-photo-card .upload-current { display: flex; align-items: center; gap: 14px; }
-.form-photo-card .upload-current img { width: 64px; height: 64px; }
-.form-photo-card .upload-meta { font-size: 10.5px; }
-.docs-grid { display: grid; grid-template-columns: minmax(0, 250px) minmax(0, 1fr); gap: 18px; align-items: start; margin-bottom: 8px; }
-.docs-grid .upload-field { margin: 0; }
-.upload-section .field-note { margin: -8px 0 18px; }
-.upload-list { list-style: none; margin: 18px 0 0; padding: 0; border-top: 1px solid var(--borda); }
-.upload-list li { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--borda); }
-.upload-list li strong { font-size: 12px; font-weight: 500; }
-.upload-list li small { display: block; margin-top: 4px; font-size: 10px; color: var(--muted); overflow-wrap: anywhere; }
-.form-subsection .form-section-title { margin: 22px 0 0; font-size: 13px; }
+/* Cadastro de cliente: topo plano, foto à direita e documentos isolados na base. */
+.form-top { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 36px; align-items: start; padding-bottom: 26px; margin-bottom: 26px; border-bottom: 1px solid var(--borda); }
+.form-top .form-summary { margin: 0; padding: 0; background: transparent; border: 0; }
+.form-top .profile-link { margin: 12px 0 0; font-size: 11px; }
+.photo-label { margin: 0 0 14px; font: 600 10px/1.4 var(--font-body); letter-spacing: .2em; color: var(--ouro); }
+.photo-row { display: flex; align-items: center; gap: 16px; }
+.photo-avatar { flex-shrink: 0; width: 68px; height: 68px; display: grid; place-items: center; border: 1px solid var(--borda); border-radius: 50%; background: #191712; color: var(--ouro); overflow: hidden; }
+.photo-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.photo-actions { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.photo-actions .upload-field { max-width: 100%; }
+.photo-remove { min-height: 0; padding: 0; background: transparent; border: 0; color: var(--muted); font-size: 11px; text-decoration: underline; text-underline-offset: 3px; }
+.photo-remove:hover { background: transparent; color: var(--erro); }
+.docs-toolbar { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); gap: 14px; align-items: end; }
+.docs-toolbar .field { margin: 0; }
+.docs-list { list-style: none; margin: 16px 0 0; padding: 0; }
+.docs-list li { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--borda); }
+.docs-list strong { display: block; font-size: 12px; font-weight: 500; overflow-wrap: anywhere; }
+.docs-list small { display: block; margin-top: 3px; font-size: 10px; color: var(--muted); }
+.doc-remove { flex-shrink: 0; width: 32px; height: 32px; min-height: 0; padding: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: 1px solid var(--borda); border-radius: 50%; color: var(--muted); }
+.doc-remove:hover { color: var(--erro); border-color: var(--erro); background: transparent; }
 @media (max-width: 1023px) {
-  .form-top { grid-template-columns: minmax(0, 1fr); }
-  .docs-grid { grid-template-columns: minmax(0, 1fr); }
+  .form-top { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  .docs-toolbar { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 767px) {
+  .photo-row { gap: 14px; }
+  .photo-avatar { width: 58px; height: 58px; }
 }

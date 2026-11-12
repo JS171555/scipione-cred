@@ -11,6 +11,7 @@ import { esc, $, mostrarMensagem, ocupado } from '../core/dom.js';
 import { navegar, definirAviso } from '../core/router.js';
 import { confirmar } from '../components/dialogos.js';
 import { uploadField, instalarUpload, validarSelecaoUpload, marcarUpload } from '../components/upload.js';
+import { icon } from '../components/icons.js';
 
 const CAMPOS = ['nome_razao_social', 'cpf_cnpj', 'rg', 'telefone', 'celular', 'email', 'cep', 'logradouro', 'numero', 'complemento', 'bairro', 'cidade', 'uf', 'observacoes'];
 const q = (sel, raiz) => $(sel, raiz);
@@ -42,19 +43,17 @@ export async function renderDevedorForm(raiz, { params, admin, signal } = {}) {
     if (atual.foto_path && typeof devedores.urlFoto === 'function') fotoAtualUrl = await Promise.resolve(devedores.urlFoto(atual.foto_path)).catch(() => null);
     if (signal?.aborted || !el.isConnected) return;
   }
-  const documentosAtuais = editando && docsAtuais.length ? `<div class="form-subsection">
-      <h3 class="form-section-title">Documentos já anexados</h3>
-      <ul class="upload-list">${docsAtuais.map((doc) => `<li><span><strong>${esc(TIPOS_DOCUMENTO[doc.tipo] ?? doc.tipo)}</strong><small>${esc(doc.nome_original)} · ${formatarTamanho(doc.tamanho_bytes)}</small></span><button type="button" class="btn sec peq" data-remover-doc="${esc(doc.id)}">Remover</button></li>`).join('')}</ul>
-    </div>` : '';
-  const fotoAtual = fotoAtualUrl ? `<div class="upload-current"><img src="${esc(fotoAtualUrl)}" alt="Foto atual de ${esc(atual.nome_razao_social)}"><button type="button" class="btn sec peq" data-remover-foto>Remover foto</button></div>` : '<p class="upload-meta">Nenhuma foto cadastrada.</p>';
+  const documentosAtuais = editando && docsAtuais.length ? `<ul class="docs-list">${docsAtuais.map((doc) => `<li><span><strong>${esc(doc.nome_original)}</strong><small>${esc(TIPOS_DOCUMENTO[doc.tipo] ?? doc.tipo)} · ${formatarTamanho(doc.tamanho_bytes)}</small></span><button type="button" class="doc-remove" data-remover-doc="${esc(doc.id)}" aria-label="Remover ${esc(doc.nome_original)}">${icon('trash-2', 15)}</button></li>`).join('')}</ul>` : '';
+  const fotoAtual = fotoAtualUrl ? `<img src="${esc(fotoAtualUrl)}" alt="Foto atual de ${esc(atual.nome_razao_social)}">` : icon('user-round', 26);
 
   el.innerHTML = `<form id="form" class="form-panel" novalidate>
     <div class="form-top">
-      <div class="form-summary"><span class="auth-eyebrow">${editando ? 'Cadastro existente' : 'Novo cadastro'}</span><strong>${editando ? 'Dados do cliente' : 'Identificação inicial'}</strong><small>Campos com validação local e regras preservadas no banco.</small>${editando ? `<p class="profile-link"><a href="#/devedores/${esc(params.id)}">Ver perfil do cliente</a></p>` : ''}</div>
-      <section class="form-photo-card" aria-labelledby="foto-titulo">
-        <h2 class="form-section-title" id="foto-titulo">Foto do cliente</h2>
-        ${editando ? fotoAtual : ''}
-        ${uploadField({ id: 'foto', label: editando ? 'Substituir foto' : 'Selecionar foto', categoria: 'foto', accept: '.png,.jpg,.jpeg,.avif', help: 'PNG, JPG, JPEG ou AVIF · limite conforme configuração.' })}
+      <div class="form-summary"><span class="auth-eyebrow">${editando ? 'Cadastro existente' : 'Novo cadastro'}</span><strong>${editando ? 'Dados do cliente' : 'Identificação inicial'}</strong>${editando ? `<p class="profile-link"><a href="#/devedores/${esc(params.id)}">Ver perfil do cliente</a></p>` : ''}</div>
+      <section class="form-photo" aria-labelledby="foto-titulo">
+        <h2 class="photo-label" id="foto-titulo">Foto do cliente</h2>
+        <div class="photo-row"><span class="photo-avatar">${fotoAtual}</span>
+          <div class="photo-actions">${uploadField({ id: 'foto', label: editando ? 'Substituir foto' : 'Selecionar foto', categoria: 'foto', accept: '.png,.jpg,.jpeg,.avif' })}${fotoAtualUrl ? '<button type="button" class="photo-remove" data-remover-foto>Remover foto</button>' : ''}</div>
+        </div>
       </section>
     </div>
     <section class="form-section" aria-labelledby="identificacao-titulo">
@@ -90,11 +89,10 @@ export async function renderDevedorForm(raiz, { params, admin, signal } = {}) {
       <label for="observacoes">Notas internas<textarea id="observacoes" name="observacoes" rows="4" aria-describedby="observacoes-erro">${esc(valorAtual(atual, 'observacoes'))}</textarea></label><p class="erro-campo" id="observacoes-erro" data-erro="observacoes" role="alert" hidden></p>
     </section>
     <section class="form-section upload-section" aria-labelledby="documentos-titulo">
-      <div class="section-heading"><h2 class="form-section-title" id="documentos-titulo">Documentos</h2><small>Opcional · acesso por links temporários</small></div>
-      <p class="field-note">Anexe identificação, comprovante de endereço ou outros arquivos do cliente.</p>
-      <div class="docs-grid">
+      <h2 class="form-section-title" id="documentos-titulo">Documentos</h2>
+      <div class="docs-toolbar">
         <div class="field"><label for="doc-tipo">Tipo de documento<select id="doc-tipo">${Object.entries(TIPOS_DOCUMENTO).map(([k, v]) => `<option value="${esc(k)}">${esc(v)}</option>`).join('')}</select></label></div>
-        ${uploadField({ id: 'docs', label: 'Selecionar documentos', categoria: 'documento', multiple: true, accept: '.png,.jpg,.jpeg,.avif,.webp,.pdf', help: 'PNG, JPG, JPEG, AVIF, WEBP ou PDF · limite conforme configuração.' })}
+        ${uploadField({ id: 'docs', label: 'Adicionar documento', categoria: 'documento', multiple: true, accept: '.png,.jpg,.jpeg,.avif,.webp,.pdf' })}
       </div>
       ${documentosAtuais}
     </section>

@@ -1,4 +1,5 @@
 import { esc } from '../core/dom.js';
+import { icon } from './icons.js';
 import { CATEGORIAS, formatarTamanho, validarArquivo } from '../utils/files.js';
 import { obterLimitesUpload } from '../services/configuracoes.js';
 
@@ -11,22 +12,20 @@ const nomes = {
 const extensoes = (categoria) => (CATEGORIAS[categoria]?.extensoes ?? []).map((x) => x.toUpperCase()).join(', ');
 
 /** HTML do campo; a validação final continua no serviço para preservar a segurança. */
-export function uploadField({ id, label = 'Arquivo', categoria, accept, multiple = false, help = '', required = false } = {}) {
+export function uploadField({ id, label = 'Selecionar arquivo', categoria, accept, multiple = false, help = '', required = false } = {}) {
   const regra = CATEGORIAS[categoria];
   const aceite = accept ?? regra?.extensoes?.map((x) => `.${x}`).join(',') ?? '';
-  const formatos = nomes[categoria] ?? extensoes(categoria);
   const inputAttrs = `${multiple ? ' multiple' : ''}${required ? ' required' : ''}`;
   return `<div class="upload-field" id="${esc(id)}-field" data-upload-category="${esc(categoria ?? '')}">
-    <label for="${esc(id)}" class="upload-label"><span>${esc(label)}</span>
+    <label for="${esc(id)}" class="upload-label"><span class="upload-icon">${icon('upload', 15)}</span><span class="upload-title">${esc(label)}</span>
       <input id="${esc(id)}" type="file" accept="${esc(aceite)}"${inputAttrs}>
     </label>
+    <button type="button" class="upload-remove" data-upload-remove hidden aria-label="Remover seleção">${icon('x', 14)}</button>
     <div class="upload-preview" id="${esc(id)}-preview" hidden aria-live="polite"></div>
-    <button type="button" class="btn sec peq upload-remove" data-upload-remove hidden>Remover seleção</button>
-    <div class="upload-meta" id="${esc(id)}-meta">${esc(help || `Formatos: ${formatos}. Limite definido pela configuração.`)}</div>
+    <div class="upload-meta" id="${esc(id)}-meta">${esc(help)}</div>
     <p class="upload-error erro-campo" id="${esc(id)}-erro" role="alert" hidden></p>
   </div>`;
 }
-
 export const renderUploadField = uploadField;
 
 function arquivosDoInput(input) {
@@ -69,7 +68,7 @@ function mostrarPreview(input, files, estado) {
   const remove = campo.querySelector('[data-upload-remove]');
   if (remove) remove.hidden = !files.length;
   if (!files.length) {
-    meta.textContent = `Formatos: ${nomes[input.dataset.uploadCategory] ?? ''}. Selecione um arquivo.`;
+    meta.textContent = '';
     return;
   }
   const lista = document.createElement('div');
