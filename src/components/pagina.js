@@ -60,7 +60,7 @@ export function pagina(raiz, { titulo, descricao = '', voltar = null, admin = ad
   };
   q('#sair').addEventListener('click', logout);
   const perfil = async () => {
-    if (await cartaoPerfil({ nome, iniciais, ativo: admin?.ativo !== false })) await logout();
+    if (await cartaoPerfil()) await logout();
   };
   q('#perfil-admin').addEventListener('click', perfil);
   q('#perfil-mobile').addEventListener('click', perfil);

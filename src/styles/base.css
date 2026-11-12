@@ -480,18 +480,8 @@ dd { margin: 0; overflow-wrap: anywhere; }
   .auth-story-body h2 { margin: 0; font-size: 30px; line-height: 1.12; max-width: 280px; }
 }
 
-/* Perfil do administrador: cartão alinhado no lugar do aviso genérico. */
+/* Perfil do administrador: texto curto e ações, sem elementos extras. */
 .perfil-card { display: flex; flex-direction: column; }
-.perfil-head { display: flex; align-items: center; gap: 14px; }
-.perfil-avatar { flex-shrink: 0; width: 54px; height: 54px; display: grid; place-items: center; border-radius: 50%; background: #242119; border: 1px solid var(--borda); color: var(--ouro); font-size: 15px; font-weight: 500; letter-spacing: .04em; }
-.perfil-ident { flex: 1; min-width: 0; }
-.perfil-ident h2 { margin: 0 0 5px; font-size: 20px; line-height: 1.2; overflow-wrap: anywhere; }
-.perfil-role { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 11px; }
-.perfil-role .icon { color: var(--ouro); }
-.perfil-note { margin: 20px 0 0; padding-top: 18px; border-top: 1px solid var(--borda); font-size: 12px; line-height: 1.6; color: var(--muted); }
-.perfil-card .acoes { margin-top: 22px; }
-@media (max-width: 767px) {
-  .perfil-head { gap: 12px; }
-  .perfil-avatar { width: 48px; height: 48px; font-size: 14px; }
-  .perfil-ident h2 { font-size: 18px; }
-}
+.perfil-note { margin: 0; font-size: 13px; line-height: 1.65; color: var(--muted); }
+.perfil-card .acoes { margin-top: 24px; }
+.dialogo:has(.perfil-card) { width: min(430px, calc(100vw - 32px)); }
