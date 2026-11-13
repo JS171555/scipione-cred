@@ -72,6 +72,21 @@ describe('lista: filtros, ordenação e paginação', () => {
     await vi.waitFor(() => expect(devedores.listarPagina).toHaveBeenLastCalledWith({ busca: '', status: '', situacao: '', ordem: 'nome_asc', pagina: 1, porPagina: 20 }));
     await vi.waitFor(() => expect(location.hash).toBe('#/devedores'));
   });
+  it('botão de filtros controla o painel recolhido do mobile', async () => {
+    devedores.listarPagina.mockResolvedValue(pag([item(1)], 1));
+    await renderListaDevedores(raiz, {});
+    await vi.waitFor(() => expect(devedores.listarPagina).toHaveBeenCalled());
+    const botao = $('#filtro-toggle');
+    expect(botao.getAttribute('aria-expanded')).toBe('false');
+    expect($('#filtros-clientes').dataset.aberto).toBe('false');
+    botao.click();
+    expect(botao.getAttribute('aria-expanded')).toBe('true');
+    expect($('#filtros-clientes').dataset.aberto).toBe('true');
+    botao.click();
+    expect($('#filtros-clientes').dataset.aberto).toBe('false');
+    muda('#f-status', 'ativo');
+    await vi.waitFor(() => expect(botao.dataset.ativos).toBe('true'));
+  });
   it('valores inválidos na URL caem nos padrões', async () => {
     devedores.listarPagina.mockResolvedValue(pag([], 0));
     await renderListaDevedores(raiz, { consulta: new URLSearchParams('status=hack&situacao=x&ordem=y&p=-3') });
