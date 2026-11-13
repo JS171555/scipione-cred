@@ -543,3 +543,11 @@ dd { margin: 0; overflow-wrap: anywhere; }
   .photo-row { gap: 14px; }
   .photo-avatar { width: 72px; height: 72px; }
 }
+
+/* Cards de dívida no mobile: ações com a mesma altura, inclusive "Registrar pagamento". */
+@media (max-width: 767px) {
+  #tabela[data-lista="dividas"] td[data-label="Ações"] .acoes-linha { align-items: stretch; }
+  #tabela[data-lista="dividas"] td[data-label="Ações"] .acoes-linha > * { height: 44px; min-height: 44px; padding: 0 8px; font-size: 11.5px; line-height: 1.1; text-align: center; }
+  .debt-card .actions-inline { align-items: stretch; }
+  .debt-card .actions-inline > * { min-width: 0; height: 44px; min-height: 44px; padding: 0 8px; font-size: 11.5px; line-height: 1.1; text-align: center; }
+}

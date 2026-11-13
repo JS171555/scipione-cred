@@ -66,6 +66,10 @@ for(const width of widths){
     const overflow=layout.document>width+1||layout.body>width+1;
     checks.push({name,width,overflow,...layout});
     if(overflow)console.log('OVERFLOW',name,width,layout);
+    if(name==='dividas'&&width<768){
+      const alturas=await page.$$eval('td[data-label="Ações"] .acoes-linha > *',els=>[...new Set(els.map(e=>Math.round(e.getBoundingClientRect().height)))]);
+      assert(alturas.length===1,`Botões dos cards de dívidas devem ter a mesma altura em ${width}px: ${alturas.join(', ')}`);
+    }
     if(['dashboard','login','clientes','pagamento','perfil'].includes(name)&&[390,1440].includes(width)) {
       await page.evaluate(()=>{const badge=document.createElement('div');badge.id='test-only-label';badge.textContent='VALIDAÇÃO VISUAL · DADOS SINTÉTICOS';badge.style.cssText='position:fixed;bottom:80px;right:8px;z-index:100;background:#171717;color:#E8DFC9;border:1px solid #34302A;border-radius:4px;padding:5px 8px;font:9px sans-serif;pointer-events:none';document.body.append(badge);});
       await page.screenshot({path:`${out}/${name}-${width}.png`,fullPage:true});
