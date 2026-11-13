@@ -165,6 +165,16 @@ tbody tr:hover { background: #1E1D19; }
 td a:not(.btn) { color: var(--marfim); text-decoration: none; }
 td a:not(.btn):hover { color: var(--ouro); }
 td .acoes-linha { flex-wrap: nowrap; }
+
+/* Dívidas (desktop): ações em grade fixa, todos os botões com o mesmo tamanho e alinhados à direita. */
+@media (min-width: 768px) {
+  #tabela[data-lista="dividas"] td[data-label="Ações"] { padding-left: 12px; padding-right: 12px; }
+  @media (max-width: 1366px) {
+    #tabela[data-lista="dividas"] td, #tabela[data-lista="dividas"] th { padding-left: 12px; padding-right: 12px; }
+  }
+  #tabela[data-lista="dividas"] td[data-label="Ações"] .acoes-linha { display: grid; grid-template-columns: repeat(4, 74px); gap: 6px; justify-content: end; }
+  #tabela[data-lista="dividas"] td[data-label="Ações"] .acoes-linha > * { width: 74px; min-width: 0; height: 40px; min-height: 40px; padding: 0 5px; font-size: 11px; line-height: 1.15; text-align: center; white-space: normal; }
+}
 .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .badge { display: inline-flex; align-items: center; padding: 4px 10px; font-size: 10px; font-weight: 500; line-height: 1.4; border-radius: 20px; white-space: nowrap; color: var(--muted); background: #242320; }
 .badge.ativo, .badge.quitada, .badge.valido { color: var(--ok); background: #202A21; }

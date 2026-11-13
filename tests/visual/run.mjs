@@ -112,6 +112,16 @@ await page.goto(`${origin}/#/devedores`);await page.waitForSelector('#tabela tab
 await page.locator('#busca').fill('inexistente');await page.waitForSelector('#tabela .empty-state');
 await page.evaluate(()=>{window.__mockError=true;});await page.locator('#limpar').click();await page.waitForSelector('#tabela .error-state');
 await page.evaluate(()=>{window.__mockError=false;});await page.locator('[data-retry]').click();await page.waitForSelector('#tabela table');
+await page.goto(`${origin}/#/dividas`);await page.waitForSelector('#tabela table');
+const acoes=await page.$$eval('td[data-label="Ações"] .acoes-linha > *',els=>els.map(e=>`${Math.round(e.getBoundingClientRect().width)}x${Math.round(e.getBoundingClientRect().height)}`));
+assert(acoes.length>=5,'Lista de dívidas deve exibir as ações das linhas');
+assert(new Set(acoes).size===1,`Botões de ação devem ter o mesmo tamanho: ${[...new Set(acoes)].join(', ')}`);
+assert(await page.evaluate(()=>{const r=document.querySelector('#tabela .rolagem');return r.scrollWidth<=r.clientWidth+1;}),'Tabela de dívidas não deve rolar na horizontal em 1440');
+await page.setViewportSize({width:1280,height:900});await page.reload();await page.waitForSelector('#tabela table');
+const acoes1280=await page.$$eval('td[data-label="Ações"] .acoes-linha > *',els=>els.map(e=>`${Math.round(e.getBoundingClientRect().width)}x${Math.round(e.getBoundingClientRect().height)}`));
+assert(new Set(acoes1280).size===1,'Botões de ação devem manter o mesmo tamanho em 1280');
+assert(await page.evaluate(()=>{const r=document.querySelector('#tabela .rolagem');return r.scrollWidth<=r.clientWidth+1;}),'Tabela de dívidas não deve rolar na horizontal em 1280');
+await page.setViewportSize({width:1440,height:1000});
 await page.goto(`${origin}/#/pagamentos`);await page.waitForSelector('#tabela table');
 await page.evaluate(()=>{window.__mockError=true;});await page.locator('#limpar').click();await page.waitForSelector('#tabela .error-state');
 await page.evaluate(()=>{window.__mockError=false;});await page.locator('[data-retry]').click();await page.waitForSelector('#tabela table');
