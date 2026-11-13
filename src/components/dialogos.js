@@ -20,8 +20,8 @@ function abrir(html, aoMontar) {
   });
 }
 
-export function confirmar(mensagem, { confirmarTexto = 'Confirmar', perigo = false } = {}) {
-  return abrir(`<form method="dialog"><div class="dialog-head${perigo ? ' aviso' : ''}">${icon(perigo ? 'alert-circle' : 'shield-check', 22)}<h2 id="dialog-title">${perigo ? 'Confirmar alteração' : 'Antes de continuar'}</h2></div><p>${esc(mensagem)}</p>
+export function confirmar(mensagem, { confirmarTexto = 'Confirmar', perigo = false, titulo = perigo ? 'Confirmar alteração' : 'Antes de continuar' } = {}) {
+  return abrir(`<form method="dialog"><div class="dialog-head${perigo ? ' aviso' : ''}">${icon(perigo ? 'alert-circle' : 'shield-check', 22)}<h2 id="dialog-title">${esc(titulo)}</h2></div><p>${esc(mensagem)}</p>
     <div class="acoes"><button type="button" data-n class="sec">Cancelar</button><button type="button" data-s class="${perigo ? 'perigo' : ''}">${esc(confirmarTexto)}</button></div></form>`,
   (d, fechar) => {
     d.querySelector('[data-n]').onclick = () => fechar(false);
@@ -46,17 +46,4 @@ export function pedirTexto(mensagem, { minimo = 3, rotulo = 'Motivo', confirmarT
     });
     ta.focus();
   });
-}
-
-/** Confirmação de perfil, só com o texto e as ações. Retorna true para encerrar a sessão. */
-export function cartaoPerfil() {
-  return abrir(`<div class="perfil-card"><h2 id="dialog-title" class="sr-only">Perfil de administrador</h2>
-      <p class="perfil-note">Perfil de administrador da Scipione Affare. O acesso é exclusivo e os documentos são privados.</p>
-      <div class="acoes"><button type="button" data-n class="sec">Fechar</button><button type="button" data-s>Encerrar sessão</button></div>
-    </div>`,
-  (d, fechar) => {
-    d.querySelector('[data-n]').onclick = () => fechar(false);
-    d.querySelector('[data-s]').onclick = () => fechar(true);
-    d.querySelector('[data-n]').focus();
-  }).then((v) => v === true);
 }
