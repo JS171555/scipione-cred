@@ -7,7 +7,7 @@ import * as documentos from '../services/documentos.js';
 import * as auditoria from '../services/auditoria.js';
 import { itemHistorico } from '../components/historico.js';
 import { TIPOS_DOCUMENTO } from '../services/documentos.js';
-import { totaisDevedor } from '../domain/financeiro.js';
+import { totaisDevedor, podeApagarDivida } from '../domain/financeiro.js';
 import { formatarDocumento, formatarTelefone, formatarCEP } from '../utils/cpf-cnpj.js';
 import { formatarBRL, formatarCentavos, paraCentavos } from '../utils/money.js';
 import { formatarData, formatarDataHora } from '../utils/dates.js';
@@ -65,7 +65,7 @@ export async function renderDevedorDetalhe(raiz, { params, admin, signal } = {})
 
   const blocoDivida = (v) => `<article class="profile-section debt-card" data-divida="${esc(v.id)}">
     <div class="section-heading"><div><span class="auth-eyebrow">Dívida</span><h3>${esc(v.descricao)} ${badgeStatus(v.status)}</h3><small>Registrada em ${formatarData(v.data_registro)} · Vencimento: ${formatarData(v.data_vencimento)}${v.observacoes ? ` · ${esc(v.observacoes)}` : ''}</small></div>
-      <div class="actions-inline"><a class="btn peq sec" href="#/dividas/${esc(v.id)}/editar">Editar</a>${v.status === 'em_aberto' ? `<a class="btn peq" href="#/dividas/${esc(v.id)}/pagamento">Registrar pagamento</a>` : ''}</div></div>
+      <div class="actions-inline"><a class="btn peq sec" href="#/dividas/${esc(v.id)}/editar">Editar</a>${v.status === 'em_aberto' ? `<a class="btn peq" href="#/dividas/${esc(v.id)}/pagamento">Registrar pagamento</a>` : ''}${podeApagarDivida(v) ? `<button type="button" class="btn peq sec perigo" data-acao="apagar-divida" data-id="${esc(v.id)}">Apagar</button>` : ''}</div></div>
     <dl class="resumo"><div><dt>Original</dt><dd>${formatarBRL(v.valor_original)}</dd></div><div><dt>Pago</dt><dd>${formatarBRL(v.total_pago)}</dd></div><div><dt>Saldo</dt><dd><strong>${formatarBRL(v.saldo)}</strong></dd></div></dl>
     ${pagsDe(v.id).length ? `<div class="table-wrap rolagem"><table class="compacta"><thead><tr><th>Data</th><th class="num">Valor</th><th>Observação</th><th>Situação</th><th></th></tr></thead><tbody>${pagsDe(v.id).map((p) => `<tr class="${p.status === 'estornado' ? 'estornado' : ''}"><td>${formatarData(p.data_pagamento)}</td><td class="num">${formatarBRL(p.valor)}</td><td>${esc(p.observacao ?? '')}${p.status === 'estornado' ? `<br><small>Estornado em ${formatarDataHora(p.estornado_em)}: ${esc(p.motivo_estorno)}</small>` : ''}</td><td>${badgeStatus(p.status)}</td><td class="actions-inline">${p.comprovante_path ? `<button class="peq sec" data-acao="comprovante" data-path="${esc(p.comprovante_path)}">Comprovante</button>` : ''}${p.status === 'valido' ? `<button class="peq perigo" data-acao="estornar" data-id="${esc(p.id)}">Estornar</button>` : ''}</td></tr>`).join('')}</tbody></table></div>` : '<p class="empty-state compact">Nenhum pagamento registrado.</p>'}
   </article>`;
@@ -109,6 +109,7 @@ export async function renderDevedorDetalhe(raiz, { params, admin, signal } = {})
       finally { if (el.isConnected) marcarUpload(input, false); }
     },
     async 'remover-foto'() { if (typeof devedores.removerFotoDoCadastro !== 'function') throw new Error('Remoção de foto indisponível.'); if (!(await confirmar('Remover a foto deste cadastro?', { confirmarTexto: 'Remover', perigo: true }))) return; if (signal?.aborted || !el.isConnected) return; await devedores.removerFotoDoCadastro(id, d.foto_path); if (signal?.aborted || !el.isConnected) return; feito('Foto removida.'); },
+    async 'apagar-divida'(alvo) { const v = listaDividas.find((x) => x.id === alvo.dataset.id); if (!v) return; if (!(await confirmar(`Apagar a dívida "${v.descricao}" de ${formatarBRL(v.valor_original)}? O registro sai do banco e a ação não pode ser desfeita.`, { confirmarTexto: 'Apagar', perigo: true }))) return; if (signal?.aborted || !el.isConnected) return; await dividas.remover(v.id); if (signal?.aborted || !el.isConnected) return; feito('Dívida apagada.'); },
     retry: recarregar,
     async 'mais-historico'(alvo) { const lista = q('#historico', raiz); if (!lista) return; const mais = await auditoria.listarPorDevedor(id, { limite: POR_PAGINA_HISTORICO, offset: lista.children.length }); if (signal?.aborted || !el.isConnected || !lista.isConnected) return; lista.insertAdjacentHTML('beforeend', mais.map((m) => itemHistorico(m, ctxHist)).join('')); if (mais.length < POR_PAGINA_HISTORICO) alvo.remove(); },
   };

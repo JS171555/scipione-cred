@@ -268,6 +268,12 @@ export async function editar(id, { descricao, observacoes, vencimento }) {
   return data;
 }
 
+/** Remove do banco apenas dívidas sem pagamentos; o RPC recusa o restante. */
+export async function remover(id) {
+  const { error } = await supabase.rpc('excluir_divida', { p_divida_id: id });
+  if (error) throw error;
+}
+
 export async function alterarValor(id, valorC) {
   const { data, error } = await supabase.rpc('alterar_valor_divida', { p_divida_id: id, p_valor: centavosParaDecimal(valorC) });
   if (error) throw error;

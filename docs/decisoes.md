@@ -21,7 +21,7 @@ Status: **Definida** (documento/prompt) · **Adotada** (solução conservadora, 
 | # | Decisão | Motivo / como ajustar |
 |---|---------|----------------------|
 | D-10 | Saldo e status calculados no banco (view + trigger), não no frontend | Fonte única de verdade; evita inconsistência |
-| D-11 | Sem exclusão de dívida/devedor/pagamento na v1; correção por edição auditada ou estorno | Preserva histórico. Se a Scipione quiser "cancelar dívida", adicionar status `cancelada` (decisão futura) |
+| D-11 | Sem exclusão de dívida/devedor/pagamento; correção por edição auditada ou estorno. Exceção aprovada em 13/11/2026: dívida sem nenhum pagamento pode ser apagada (RN-36.1) | Preserva o histórico financeiro: nada que tenha recebido dinheiro é apagado. A exclusão da dívida sem pagamentos usa RPC `excluir_divida` (security definer), grava `DELETE` na auditoria e é o único caminho de DELETE do sistema |
 | D-12 | Devedor inativo não recebe nova dívida; pagamentos seguem permitidos | Spec omissa; regra mais segura. Ajustável em uma RPC |
 | D-13 | Data de pagamento/registro não pode ser futura; pagamento não anterior ao registro da dívida | Evita erros de digitação |
 | D-14 | Pagamento > saldo é bloqueado (sem "crédito" ou troco) | Exigência do prompt |
@@ -45,7 +45,7 @@ Status: **Definida** (documento/prompt) · **Adotada** (solução conservadora, 
 5. E-mail e nome do administrador inicial; serviço de e-mail (SMTP) para recuperação de senha.
 6. Políticas de privacidade, **retenção** e tratamento de dados (LGPD).
 7. Política de backup conforme o plano contratado do Supabase.
-8. Necessidade de "cancelar dívida" (D-11).
+8. Necessidade de "cancelar dívida" (D-11) — em aberto: hoje existe apenas a exclusão de dívida sem pagamentos (RN-36.1).
 
 ## Decisões da Etapa 2
 

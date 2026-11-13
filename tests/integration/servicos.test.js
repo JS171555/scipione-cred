@@ -295,6 +295,24 @@ describe('Etapa 4: dashboard, listagem, histórico e integração entre módulos
     expect(await devedores.nomesPorId([])).toEqual({});
   });
 
+  it('exclui do banco só dívida sem pagamentos e registra a exclusão na auditoria', async () => {
+    const novo = await devedores.criar(validarDevedor({ tipo_pessoa: 'PF', nome_razao_social: 'Cliente Exclusão', cpf_cnpj: '390.533.447-05', celular: '(11) 97777-6666' }).dados);
+    const semPagamento = (await dividas.registrar({ devedorId: novo.id, descricao: 'Lançamento por engano', valorC: 9000 })).id;
+    await dividas.remover(semPagamento);
+    expect(await dividas.obter(semPagamento)).toBeNull();
+    const historico = await auditoria.listarPorDevedor(novo.id, { limite: 10 });
+    expect(historico.some((m) => m.entidade === 'dividas' && m.entidade_id === semPagamento && m.operacao === 'DELETE')).toBe(true);
+
+    const comPagamento = (await dividas.registrar({ devedorId: novo.id, descricao: 'Com pagamento', valorC: 10000 })).id;
+    await pagamentos.registrar({ dividaId: comPagamento, valorC: 1000, dataPagamento: hojeISO() });
+    expect(await msg(dividas.remover(comPagamento))).toMatch(/já tem pagamentos registrados/);
+    expect(await dividas.obter(comPagamento)).not.toBeNull();
+
+    usar('outro');
+    const outra = await (async () => { usar('admin'); const t = (await dividas.registrar({ devedorId: novo.id, descricao: 'Outra', valorC: 500 })).id; usar('outro'); return t; })();
+    expect(await msg(dividas.remover(outra))).toMatch(/restrito|negado/i);
+    usar('admin');
+  });
   it('usuário que não é administrador vê dashboard zerado e nenhuma atividade', async () => {
     usar('outro');
     expect(await dashboard.obterIndicadores()).toMatchObject({ total_devedores: 0, dividas_em_aberto: 0, valor_total_em_aberto: 0 });

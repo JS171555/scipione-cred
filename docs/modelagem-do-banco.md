@@ -148,9 +148,10 @@ Políticas em `storage.objects`: `is_admin()` para select/insert/update/delete p
 4. `20261111000004_dividas_e_pagamentos` — triggers de saldo, imutabilidade e bloqueio de linha
 5. `20261111000005_auditoria` — append-only
 6. `20261111000006_views_e_rpcs`
-7. `20261111000007_rls_e_permissoes` — `anon` sem acesso; sem DELETE para ninguém
+7. `20261111000007_rls_e_permissoes` — `anon` sem acesso; sem GRANT de DELETE (a exclusão de dívida sem pagamentos passa apenas pelo RPC `excluir_divida`, que define um GUC transacional restrito)
 8. `20261111000008_storage` — 3 buckets privados e políticas
 9. `20261111000009_configuracoes` — limites de upload sincronizados com os buckets
 10. `20261112000010_indices_listagem` — índices para ordenação/paginação e agregação por devedor (aditiva; **aplicar no projeto já existente**)
+11. `20261113000011_exclusao_divida_sem_pagamentos` — RPC `excluir_divida(uuid)` para apagar dívida **sem nenhum pagamento**, com registro `DELETE` na auditoria; nenhum GRANT de DELETE é concedido (aditiva; **aplicar no projeto já existente**)
 
 Ajustes em relação ao plano da Etapa 1: documentos e comprovantes não podem ser apagados/sobrescritos no Storage (só fotos, por causa da troca); `devedores_foto_path_valido`, `devedor_documentos_path_valido` e `pagamentos_comprovante_valido` amarram cada arquivo à pasta do próprio devedor/dívida.

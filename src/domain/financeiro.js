@@ -11,6 +11,13 @@ export function totalPagoCentavos(pagamentos) {
 export const calcularSaldo = (valorOriginalC, pagamentos) => valorOriginalC - totalPagoCentavos(pagamentos);
 export const statusDivida = (valorOriginalC, pagoC) => (valorOriginalC - pagoC <= 0 ? 'quitada' : 'em_aberto');
 
+/** Só é possível apagar do banco a dívida que nunca recebeu pagamento (histórico preservado). */
+export function podeApagarDivida(divida) {
+  const pago = Number(divida?.total_pago ?? 0);
+  if (Number.isFinite(pago)) return pago === 0;
+  return Number(divida?.saldo ?? 0) === Number(divida?.valor_original ?? 0);
+}
+
 /** Validação de UX antes de chamar o banco. Retorna lista de erros (vazia = ok). */
 export function validarPagamento({ valorC, saldoC, dataISO, dataRegistroISO, hojeISO }) {
   const erros = [];

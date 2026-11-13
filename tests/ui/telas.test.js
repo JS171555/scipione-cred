@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('../../src/services/auditoria.js', () => ({ listarPorDevedor: vi.fn(async () => []), listarRecentes: vi.fn(async () => []) }));
 vi.mock('../../src/services/devedores.js', () => ({ listarPagina: vi.fn(), urlsFotos: vi.fn(async () => ({})), nomesPorId: vi.fn(async () => ({})), ORDENS: { nome_asc: [], nome_desc: [], recentes: [], antigos: [] }, obter: vi.fn(), criar: vi.fn(), atualizar: vi.fn(), alterarStatus: vi.fn(), definirFoto: vi.fn(), urlFoto: vi.fn() }));
-vi.mock('../../src/services/dividas.js', () => ({ listarPorDevedor: vi.fn(), obter: vi.fn(), registrar: vi.fn(), editar: vi.fn(), alterarValor: vi.fn() }));
+vi.mock('../../src/services/dividas.js', () => ({ listarPorDevedor: vi.fn(), obter: vi.fn(), registrar: vi.fn(), editar: vi.fn(), alterarValor: vi.fn(), remover: vi.fn() }));
 vi.mock('../../src/services/pagamentos.js', () => ({ listarPorDevedor: vi.fn(), registrar: vi.fn(), estornar: vi.fn(), urlComprovante: vi.fn() }));
 vi.mock('../../src/services/documentos.js', () => ({ listar: vi.fn(), adicionar: vi.fn(), remover: vi.fn(), urlDocumento: vi.fn(), TIPOS_DOCUMENTO: { identificacao: 'Identificação', comprovante_endereco: 'Comprovante de endereço', outro: 'Outro' } }));
 vi.mock('../../src/services/configuracoes.js', () => ({ obterLimitesUpload: vi.fn(async () => ({ foto: 5e6, documento: 1e7, comprovante: 1e7 })) }));
@@ -139,6 +139,23 @@ describe('perfil do devedor', () => {
     pagamentos.estornar.mockResolvedValueOnce({});
     document.querySelector('dialog form').dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
     await vi.waitFor(() => expect(pagamentos.estornar).toHaveBeenCalledWith('pg1', 'Valor incorreto'));
+  });
+  it('apaga dívida sem pagamentos depois da confirmação e esconde o botão quando há pagamento', async () => {
+    const semPagamento = { ...divida, id: '33333333-3333-4333-8333-333333333333', total_pago: 0, saldo: 1500 };
+    devedores.obter.mockResolvedValue(devedor);
+    dividas.listarPorDevedor.mockResolvedValue([divida, semPagamento]);
+    pagamentos.listarPorDevedor.mockResolvedValue([]);
+    documentos.listar.mockResolvedValue([]);
+    await renderDevedorDetalhe(raiz, { params: { id: ID } });
+    await vi.waitFor(() => expect($('[data-acao="apagar-divida"]')).toBeTruthy());
+    expect(raiz.querySelectorAll('[data-acao="apagar-divida"]')).toHaveLength(1);
+    expect($('[data-acao="apagar-divida"]').dataset.id).toBe(semPagamento.id);
+    $('[data-acao="apagar-divida"]').click();
+    await vi.waitFor(() => expect(document.querySelector('dialog [data-s]')).toBeTruthy());
+    expect(document.querySelector('dialog').textContent).toMatch(/não pode ser desfeita/);
+    dividas.remover.mockResolvedValueOnce();
+    document.querySelector('dialog [data-s]').click();
+    await vi.waitFor(() => expect(dividas.remover).toHaveBeenCalledWith(semPagamento.id));
   });
   it('exibe erro traduzido quando a operação falha', async () => {
     documentos.remover.mockRejectedValueOnce({ code: '42501', message: 'permission denied' });

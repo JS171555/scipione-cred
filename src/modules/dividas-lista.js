@@ -3,7 +3,9 @@ import * as dividas from '../services/dividas.js';
 import { formatarBRL } from '../utils/money.js';
 import { formatarData } from '../utils/dates.js';
 import { traduzirErro } from '../core/errors.js';
-import { esc } from '../core/dom.js';
+import { esc, mostrarMensagem } from '../core/dom.js';
+import { confirmar } from '../components/dialogos.js';
+import { podeApagarDivida } from '../domain/financeiro.js';
 import { loadingState, emptyState, errorState } from '../components/states.js';
 import { botaoFiltros, instalarBotaoFiltros } from '../components/filtros.js';
 
@@ -42,6 +44,7 @@ function linha(v) {
       <a class="btn sec peq" href="#/devedores/${esc(v.devedor_id)}">Abrir cliente</a>
       <a class="btn sec peq" href="#/dividas/${esc(v.id)}/editar">Editar</a>
       ${v.status === 'em_aberto' ? `<a class="btn peq" href="#/dividas/${esc(v.id)}/pagamento">Registrar pagamento</a>` : ''}
+      ${podeApagarDivida(v) ? `<button type="button" class="btn sec peq perigo" data-apagar-divida="${esc(v.id)}" data-descricao="${esc(v.descricao)}" data-valor="${esc(String(v.valor_original ?? ''))}">Apagar</button>` : ''}
     </span></td>
   </tr>`;
 }
@@ -102,6 +105,15 @@ export async function renderListaDividas(raiz, { consulta = new URLSearchParams(
   const sincronizarFiltros = () => marcarFiltrosAtivos(estado.status || estado.ordem !== 'recentes');
   q('#limpar').addEventListener('click', () => { estado.busca = ''; estado.status = ''; estado.ordem = 'recentes'; q('#busca').value = ''; q('#f-status').value = ''; q('#f-ordem').value = 'recentes'; mudou(); });
   q('#paginacao').addEventListener('click', (event) => { const botao = event.target.closest('[data-pg]'); if (botao && !botao.disabled) { estado.pagina = Number(botao.dataset.pg); carregar(); } });
-  q('#tabela').addEventListener('click', (event) => { if (event.target.closest('[data-retry], [data-acao="retry"]')) carregar(); });
+  q('#tabela').addEventListener('click', async (event) => {
+    if (event.target.closest('[data-retry], [data-acao="retry"]')) return carregar();
+    const botao = event.target.closest('[data-apagar-divida]');
+    if (!botao || botao.disabled) return;
+    const confirmado = await confirmar(`Apagar a dívida "${botao.dataset.descricao}" de ${formatarBRL(botao.dataset.valor)}? O registro sai do banco e a ação não pode ser desfeita.`, { confirmarTexto: 'Apagar', perigo: true });
+    if (!confirmado || signal?.aborted || !el.isConnected) return;
+    botao.disabled = true;
+    try { await dividas.remover(botao.dataset.apagarDivida); q('#msg') && mostrarMensagem(q('#msg'), ''); carregar(); }
+    catch (e) { if (!signal?.aborted && el.isConnected) mostrarMensagem(q('#msg'), traduzirErro(e)); botao.disabled = false; }
+  });
   carregar();
 }

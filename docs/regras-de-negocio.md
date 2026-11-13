@@ -32,7 +32,8 @@ Legenda: **[Escopo]** definido no documento/prompt · **[Adotada]** decisão con
 - RN-33 [Adotada] Data do registro padrão = hoje; não pode ser futura. Vencimento, se informado, ≥ data do registro.
 - RN-34 Status é **derivado**: `quitada` quando saldo = 0; `em_aberto` caso contrário. Mantido pelo banco, nunca editado à mão.
 - RN-35 [Adotada] Edição permitida: descrição, observações, vencimento. Valor original só pode mudar se continuar ≥ total pago válido; toda alteração de valor é auditada com antes/depois.
-- RN-36 [Adotada] Sem exclusão de dívida na v1 (ver D-11); erros são corrigidos por edição auditada.
+- RN-36 [Revisada em 13/11/2026] Dívida com qualquer pagamento registrado não é excluída; erros são corrigidos por edição auditada ou estorno.
+- RN-36.1 Dívida sem nenhum pagamento pode ser apagada do banco pela ação Apagar (RPC `excluir_divida`), exclusiva do administrador, com confirmação na tela e registro `DELETE` na auditoria.
 
 ## Pagamentos e saldo
 - RN-40 [Escopo] **Saldo = valor original − soma dos pagamentos válidos.** Sem juros, multas, encargos ou parcelamento.

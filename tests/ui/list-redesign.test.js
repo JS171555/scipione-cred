@@ -11,6 +11,7 @@ vi.mock('../../src/services/dividas.js', () => ({
   listarPagina: vi.fn(),
   listarPorDevedor: vi.fn(async () => []),
   obter: vi.fn(),
+  remover: vi.fn(),
 }));
 vi.mock('../../src/services/pagamentos.js', () => ({
   listarPagina: vi.fn(),
@@ -65,6 +66,26 @@ describe('listas financeiras globais', () => {
     expect(texto()).toContain('Lançamento duplicado');
     expect(raiz.querySelector('[data-acao="comprovante"][data-path="' + DIV + '/rec.pdf"]')).toBeTruthy();
     expect(raiz.querySelector('a[href="#/dividas/' + DIV + '/pagamento"]')).toBeTruthy();
+  });
+
+  it('permite apagar dívida sem pagamentos após confirmação', async () => {
+    HTMLDialogElement.prototype.showModal = function () { this.setAttribute('open', ''); };
+    HTMLDialogElement.prototype.close = function () { this.removeAttribute('open'); };
+    const base = { devedor_id: DEV, devedor_nome: 'Ana Souza', valor_original: 1200, data_registro: '2026-11-01', data_vencimento: null };
+    dividas.listarPagina.mockResolvedValue(pagina([
+      { ...base, id: DIV, descricao: 'Empréstimo', total_pago: 0, saldo: 1200, status: 'em_aberto' },
+      { ...base, id: '44444444-4444-4444-8444-444444444444', descricao: 'Com pagamento', total_pago: 200, saldo: 1000, status: 'em_aberto' },
+    ]));
+    await renderListaDividas(raiz, {});
+    await vi.waitFor(() => expect(raiz.querySelector('[data-apagar-divida]')).toBeTruthy());
+    const botoes = raiz.querySelectorAll('[data-apagar-divida]');
+    expect(botoes).toHaveLength(1);
+    expect(botoes[0].dataset.apagarDivida).toBe(DIV);
+    botoes[0].click();
+    await vi.waitFor(() => expect(document.querySelector('dialog [data-s]')).toBeTruthy());
+    dividas.remover.mockResolvedValueOnce();
+    document.querySelector('dialog [data-s]').click();
+    await vi.waitFor(() => expect(dividas.remover).toHaveBeenCalledWith(DIV));
   });
 
   it('recolhe os filtros atrás do botão nas listas financeiras', async () => {
