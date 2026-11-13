@@ -133,7 +133,32 @@ export async function renderDevedorForm(raiz, { params, admin, signal } = {}) {
     q('#numero', raiz).focus();
   });
 
-  instalarUpload(q('#foto', raiz), { categoria: 'foto' });
+  const fotoInput = q('#foto', raiz);
+  const rotuloFoto = editando ? 'Substituir foto' : 'Selecionar foto';
+  let previewFotoUrl = null;
+  const trocarAvatar = (html, previa = false) => {
+    const avatar = q('.photo-avatar', raiz);
+    if (!avatar) return;
+    avatar.innerHTML = html;
+    if (previa) avatar.dataset.previa = 'true'; else delete avatar.dataset.previa;
+    q('#foto-field', raiz)?.classList.toggle('upload-com-previa', previa);
+    const titulo = q('#foto-field .upload-title', raiz);
+    if (titulo) titulo.textContent = previa ? 'Trocar foto' : rotuloFoto;
+  };
+  instalarUpload(fotoInput, {
+    categoria: 'foto',
+    onChange: ({ arquivos }) => {
+      if (previewFotoUrl && typeof URL.revokeObjectURL === 'function') URL.revokeObjectURL(previewFotoUrl);
+      previewFotoUrl = null;
+      const arquivo = arquivos?.[0];
+      if (arquivo && arquivo.type?.startsWith('image/') && typeof URL.createObjectURL === 'function') {
+        previewFotoUrl = URL.createObjectURL(arquivo);
+        trocarAvatar(`<img src="${esc(previewFotoUrl)}" alt="Prévia da foto selecionada">`, true);
+        return;
+      }
+      trocarAvatar(fotoAtual);
+    },
+  });
   instalarUpload(q('#docs', raiz), { categoria: 'documento' });
   raiz.querySelector('[data-remover-foto]')?.addEventListener('click', async () => {
     if (!atual?.foto_path || typeof devedores.removerFotoDoCadastro !== 'function') return mostrarMensagem(q('#msg', raiz), 'A remoção de foto não está disponível neste ambiente.');

@@ -502,6 +502,10 @@ dd { margin: 0; overflow-wrap: anywhere; }
 .photo-row { display: flex; align-items: center; gap: 18px; }
 .photo-avatar { flex-shrink: 0; width: 96px; height: 96px; display: grid; place-items: center; border: 1px solid var(--borda); border-radius: 50%; background: #191712; color: var(--ouro); overflow: hidden; }
 .photo-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.photo-avatar[data-previa] { border-color: var(--ouro); box-shadow: 0 0 0 3px rgba(184, 154, 98, .16); }
+.upload-com-previa .upload-preview-image { display: none; }
+.upload-com-previa:not([aria-busy="true"]) .upload-meta { display: none; }
+.upload-com-previa .upload-preview-item { gap: 0; }
 .photo-actions { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
 .photo-actions .upload-field { max-width: 100%; }
 .photo-remove { min-height: 0; padding: 0; background: transparent; border: 0; color: var(--muted); font-size: 11px; text-decoration: underline; text-underline-offset: 3px; }
@@ -520,5 +524,5 @@ dd { margin: 0; overflow-wrap: anywhere; }
 }
 @media (max-width: 767px) {
   .photo-row { gap: 14px; }
-  .photo-avatar { width: 58px; height: 58px; }
+  .photo-avatar { width: 72px; height: 72px; }
 }
