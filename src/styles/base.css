@@ -153,7 +153,8 @@ label.inline { display: inline-flex; align-items: center; margin: 0 28px 0 0; mi
 .search-field > .icon { position: absolute; left: 14px; top: 15px; color: var(--muted); }
 .filtros, .filter-bar { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; padding: 20px; border: 1px solid var(--borda); border-radius: var(--radius); background: var(--painel); margin-bottom: 24px; }
 .filtros label, .filter-bar label { margin: 0; flex: 1; min-width: 150px; }
-.filtro-toggle { display: none; position: relative; }
+.filtro-toggle { position: relative; min-height: 48px; }
+.filtros[data-aberto="false"], .filter-bar[data-aberto="false"] { display: none; }
 .filtro-toggle[aria-expanded="true"] { border-color: var(--ouro); color: var(--ouro); }
 .filtro-toggle[data-ativos="true"]::after { content: ''; position: absolute; top: 7px; right: 7px; width: 5px; height: 5px; border-radius: 50%; background: var(--ouro); }
 .rolagem { overflow-x: auto; border: 1px solid var(--borda); border-radius: var(--radius); }
@@ -311,9 +312,7 @@ dd { margin: 0; overflow-wrap: anywhere; }
   .barra > input, .search-field { flex-basis: 100%; max-width: none; }
   .filtros, .filter-bar { padding: 16px; gap: 14px; }
   .filtros label, .filter-bar label { min-width: 100%; }
-  .filtro-toggle { display: inline-flex; }
   .list-toolbar > .btn, .list-toolbar .filtro-toggle { min-height: 48px; }
-  .filtros[data-aberto="false"] { display: none; }
   .grade { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .form-panel { padding: 20px; }
   .form-section { margin-bottom: 22px; padding-bottom: 22px; }
@@ -552,6 +551,11 @@ dd { margin: 0; overflow-wrap: anywhere; }
   .debt-card .actions-inline > * { min-width: 0; height: 44px; min-height: 44px; padding: 0 8px; font-size: 11.5px; line-height: 1.1; text-align: center; }
 }
 
+/* Desktop: busca à esquerda e ações da lista agrupadas à direita (filtros ao lado da ação principal). */
+@media (min-width: 768px) {
+  .list-toolbar { justify-content: flex-start; }
+  .list-toolbar > .btn:not(.filtro-toggle) { margin-left: auto; }
+}
 /* Mobile: nenhuma barra de rolagem visível (a rolagem continua por toque e gesto). */
 @media (max-width: 767px) {
   html, body, * { scrollbar-width: none; -ms-overflow-style: none; }

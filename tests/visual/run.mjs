@@ -126,6 +126,15 @@ await page.goto(`${origin}/#/devedores/novo`);await page.waitForSelector('#nome_
 await page.locator('#salvar').click();assert(await page.locator('#nome_razao_social').getAttribute('aria-invalid')==='true');
 await page.locator('input[value="PJ"]').check();assert(await page.locator('#rg').isDisabled());
 await page.goto(`${origin}/#/devedores`);await page.waitForSelector('#tabela table');
+assert(await page.locator('#filtros-painel').isHidden(),'Filtros devem nascer recolhidos no desktop');
+await page.locator('#filtro-toggle').click();
+assert(await page.locator('#filtros-painel').isVisible(),'Botão de filtros deve abrir o cartão no desktop');
+const alinhamento=await page.evaluate(()=>{
+  const medir=(seletor)=>{const b=document.querySelector(seletor).getBoundingClientRect();return {topo:Math.round(b.top),altura:Math.round(b.height)};};
+  return {busca:medir('#busca'),principal:medir('.list-toolbar > .btn:not(.filtro-toggle)'),filtro:medir('#filtro-toggle')};
+});
+assert(alinhamento.busca.altura===alinhamento.principal.altura&&alinhamento.principal.altura===alinhamento.filtro.altura,`Botões da barra com alturas diferentes: ${JSON.stringify(alinhamento)}`);
+assert(alinhamento.busca.topo===alinhamento.filtro.topo&&alinhamento.principal.topo===alinhamento.filtro.topo,`Botão de filtros desalinhado da busca/ação: ${JSON.stringify(alinhamento)}`);
 await page.locator('#busca').fill('inexistente');await page.waitForSelector('#tabela .empty-state');
 await page.evaluate(()=>{window.__mockError=true;});await page.locator('#limpar').click();await page.waitForSelector('#tabela .error-state');
 await page.evaluate(()=>{window.__mockError=false;});await page.locator('[data-retry]').click();await page.waitForSelector('#tabela table');
@@ -163,6 +172,8 @@ const pdf=await page.evaluate(async(b64)=>{
 assert(pdf.tipo==='application/pdf','PDF deve continuar PDF depois da otimização');
 assert(pdf.final<=pdf.original,`PDF otimizado (${pdf.final}) não pode ficar maior que o original (${pdf.original})`);
 await page.goto(`${origin}/#/pagamentos`);await page.waitForSelector('#tabela table');
+assert(await page.locator('#filtros-painel').isHidden(),'Filtros de pagamentos devem nascer recolhidos');
+await page.locator('#filtro-toggle').click();
 await page.evaluate(()=>{window.__mockError=true;});await page.locator('#limpar').click();await page.waitForSelector('#tabela .error-state');
 await page.evaluate(()=>{window.__mockError=false;});await page.locator('[data-retry]').click();await page.waitForSelector('#tabela table');
 await page.evaluate(()=>{window.__mockAdmin=false;location.hash='/login';});await page.waitForSelector('#senha');

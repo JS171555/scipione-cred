@@ -1,11 +1,11 @@
 import { icon } from './icons.js';
 
 /**
- * Botão que abre e fecha o cartão de filtros em telas pequenas.
- * No desktop o botão fica oculto e o cartão permanece sempre visível (ver base.css).
+ * Botão que abre e fecha o cartão de filtros. O cartão nasce recolhido em qualquer largura
+ * (ver base.css) e o botão fica na mesma linha e com a mesma altura da ação principal da lista.
  */
 export function botaoFiltros(painelId = 'filtros-painel', rotulo = 'Filtros') {
-  return `<button type="button" class="btn sec peq filtro-toggle" id="filtro-toggle" aria-expanded="false" aria-controls="${painelId}">${icon('sliders-horizontal', 15)} ${rotulo}</button>`;
+  return `<button type="button" class="btn sec filtro-toggle" id="filtro-toggle" aria-expanded="false" aria-controls="${painelId}">${icon('sliders-horizontal', 15)} ${rotulo}</button>`;
 }
 
 /** Liga o botão ao painel recolhível e devolve o marcador de filtros ativos. */
