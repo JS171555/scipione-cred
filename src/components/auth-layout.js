@@ -8,7 +8,7 @@ export function authLayout({
   asideText = 'Clientes, dívidas e pagamentos em um só lugar. Precisão em cada registro, confiança em cada decisão.',
 } = {}) {
   return `<main class="auth-layout"><section class="auth-story" aria-label="Scipione Cred">
-    <picture class="auth-story-media" aria-hidden="true"><source media="(max-width: 767px)" srcset="/images/login-desk-800.webp"><img src="/images/login-desk-1492.webp" alt="" width="1492" height="1054" fetchpriority="high" decoding="async"></picture>
+    <picture class="auth-story-media" aria-hidden="true"><source media="(max-width: 767px)" srcset="/images/login-desk-800.webp"><img src="/images/login-desk-1492.webp" alt="" width="1280" height="1280" fetchpriority="high" decoding="async"></picture>
     <span class="auth-story-scrim" aria-hidden="true"></span>
     <a class="brand auth-brand" href="#/login" aria-label="Scipione Cred">${marca()}</a>
     <div class="auth-story-body"><p class="auth-eyebrow">SCIPIONE AFFARE · GESTÃO FINANCEIRA</p><h2>${esc(asideTitle)}</h2><div class="auth-story-rule" aria-hidden="true"></div><p class="auth-story-copy">${esc(asideText)}</p></div>
