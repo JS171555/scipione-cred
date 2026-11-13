@@ -66,6 +66,9 @@ for(const width of widths){
     const overflow=layout.document>width+1||layout.body>width+1;
     checks.push({name,width,overflow,...layout});
     if(overflow)console.log('OVERFLOW',name,width,layout);
+    const barras=await page.evaluate(()=>({raiz:getComputedStyle(document.documentElement).scrollbarWidth,corpo:getComputedStyle(document.body).scrollbarWidth}));
+    if(width<768) assert(barras.raiz==='none'&&barras.corpo==='none',`${width}px: barras de rolagem devem estar ocultas (${barras.raiz}/${barras.corpo})`);
+    else assert(barras.raiz!=='none',`${width}px: barra de rolagem deve continuar visível (${barras.raiz})`);
     if(name==='dividas'&&width<768){
       const alturas=await page.$$eval('td[data-label="Ações"] .acoes-linha > *',els=>[...new Set(els.map(e=>Math.round(e.getBoundingClientRect().height)))]);
       assert(alturas.length===1,`Botões dos cards de dívidas devem ter a mesma altura em ${width}px: ${alturas.join(', ')}`);
@@ -78,6 +81,16 @@ for(const width of widths){
     console.log(`Visual ${name} ${width}px: ${overflow?'OVERFLOW':'OK'}`);
   }
 }
+// Diálogo com conteúdo rolável também esconde a barra no mobile.
+await page.setViewportSize({width:390,height:600});
+await page.goto(`${origin}/#/`);await page.waitForSelector('.cards');
+await page.evaluate(()=>{window.__mockAdmin=true;});
+await page.goto(`${origin}/#/`);await page.waitForSelector('#perfil-mobile');
+await page.click('#perfil-mobile');
+await page.waitForSelector('dialog[open]',{timeout:5000});
+const barraDialogo=await page.evaluate(()=>getComputedStyle(document.querySelector('dialog[open]')).scrollbarWidth);
+assert(barraDialogo==='none',`Diálogo rolável deve esconder a barra no mobile (${barraDialogo})`);
+await page.keyboard.press('Escape');
 // Textos longos nas atividades recentes precisam quebrar dentro do painel.
 await page.setViewportSize({width:320,height:844});
 await page.goto(`${origin}/#/`);await page.waitForSelector('.historico');
