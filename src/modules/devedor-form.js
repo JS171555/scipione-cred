@@ -48,7 +48,6 @@ export async function renderDevedorForm(raiz, { params, admin, signal } = {}) {
 
   el.innerHTML = `<form id="form" class="form-panel" novalidate>
     <div class="form-top">
-      <div class="form-summary"><span class="auth-eyebrow">${editando ? 'Cadastro existente' : 'Novo cadastro'}</span><strong>${editando ? 'Dados do cliente' : 'Identificação inicial'}</strong>${editando ? `<p class="profile-link"><a href="#/devedores/${esc(params.id)}">Ver perfil do cliente</a></p>` : ''}</div>
       <section class="form-photo" aria-labelledby="foto-titulo">
         <h2 class="photo-label" id="foto-titulo">Foto do cliente</h2>
         <div class="photo-row"><span class="photo-avatar">${fotoAtual}</span>

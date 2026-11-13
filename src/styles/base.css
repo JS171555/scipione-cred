@@ -495,9 +495,8 @@ dd { margin: 0; overflow-wrap: anywhere; }
 .dialogo:has(.perfil-card) { width: min(430px, calc(100vw - 32px)); }
 
 /* Cadastro de cliente: topo plano, foto à direita e documentos isolados na base. */
-.form-top { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 36px; align-items: center; margin-bottom: 34px; }
-.form-top .form-summary { margin: 0; padding: 0; background: transparent; border: 0; }
-.form-top .profile-link { margin: 12px 0 0; font-size: 11px; }
+.form-top { display: block; margin-bottom: 34px; }
+.form-top .form-photo { max-width: 460px; }
 .photo-label { margin: 0 0 14px; font: 600 10px/1.4 var(--font-body); letter-spacing: .2em; color: var(--ouro); }
 .photo-row { display: flex; align-items: center; gap: 18px; }
 .photo-avatar { flex-shrink: 0; width: 96px; height: 96px; display: grid; place-items: center; border: 1px solid var(--borda); border-radius: 50%; background: #191712; color: var(--ouro); overflow: hidden; }
@@ -507,7 +506,7 @@ dd { margin: 0; overflow-wrap: anywhere; }
 .upload-com-previa:not([aria-busy="true"]) .upload-meta { display: none; }
 .upload-com-previa .upload-preview-item { gap: 0; }
 .photo-actions { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: stretch; gap: 8px; }
-.photo-actions .upload-field { max-width: 100%; }
+.photo-actions .upload-field { max-width: 300px; }
 .photo-remove { min-height: 0; padding: 0; background: transparent; border: 0; color: var(--muted); font-size: 11px; text-decoration: underline; text-underline-offset: 3px; }
 .photo-remove:hover { background: transparent; color: var(--erro); }
 .docs-toolbar { display: grid; grid-template-columns: minmax(0, 280px) minmax(0, 1fr); gap: 18px; align-items: start; }
@@ -519,7 +518,8 @@ dd { margin: 0; overflow-wrap: anywhere; }
 .doc-remove { flex-shrink: 0; width: 32px; height: 32px; min-height: 0; padding: 0; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: 1px solid var(--borda); border-radius: 50%; color: var(--muted); }
 .doc-remove:hover { color: var(--erro); border-color: var(--erro); background: transparent; }
 @media (max-width: 1023px) {
-  .form-top { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  .form-top { margin-bottom: 26px; }
+  .form-top .form-photo { max-width: none; }
   .docs-toolbar { grid-template-columns: minmax(0, 1fr); gap: 14px; }
 }
 @media (max-width: 767px) {
