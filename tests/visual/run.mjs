@@ -74,6 +74,20 @@ for(const width of widths){
     console.log(`Visual ${name} ${width}px: ${overflow?'OVERFLOW':'OK'}`);
   }
 }
+// Textos longos nas atividades recentes precisam quebrar dentro do painel.
+await page.setViewportSize({width:320,height:844});
+await page.goto(`${origin}/#/`);await page.waitForSelector('.historico');
+const estourouAtividade=await page.evaluate(()=>{
+  const bloco=document.querySelector('.historico li div');
+  const original=bloco.innerHTML;
+  bloco.textContent='ClienteSemEspacosComNomeMuitoLongoParaConferirAQuebraDeLinhaNoMobile';
+  const limite=document.documentElement.clientWidth;
+  const estourou=document.documentElement.scrollWidth>limite+1;
+  bloco.innerHTML=original;
+  return estourou;
+});
+assert(!estourouAtividade,'Atividades recentes devem conter textos longos no mobile');
+
 // Functional interaction checks use only the intercepted, in-memory services.
 await page.setViewportSize({width:1440,height:1000});
 await page.goto(`${origin}/#/`);await page.waitForSelector('.cards');
