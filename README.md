@@ -2,58 +2,63 @@
 
 Sistema interno de gestão de dívidas e relacionamento com devedores da Scipione Affare.
 
-O Scipione Cred foi pensado para centralizar o controle de cadastro de devedores, registro de dívidas, pagamentos, acompanhamento financeiro e auditoria operacional em uma interface web segura e moderna.
+O Scipione Cred foi pensado para centralizar o cadastro de devedores, registro de dívidas, pagamentos, acompanhamento financeiro, auditoria operacional e gestão documental em uma interface web segura, responsiva e orientada a processos internos.
 
-A aplicação utiliza uma arquitetura baseada em frontend leve com Vite + JavaScript + Ionic, integrada ao Supabase para autenticação, banco de dados relacional, armazenamento e políticas de segurança.
+A solução combina frontend leve em Vite + JavaScript + Ionic com Supabase para autenticação, banco relacional, armazenamento de arquivos, políticas de acesso e regras de negócio em nível de banco.
 
 ## Visão geral
 
-A solução foi desenvolvida para atender cenários de cobrança, controle financeiro e monitoramento de crédito, garantindo:
+O sistema foi desenvolvido para facilitar o controle de cobrança, acompanhamento financeiro e monitoramento de crédito com foco em segurança, rastreabilidade e operação eficiente. Entre os principais objetivos estão:
 
-- cadastro e gestão de devedores PF/PJ;
-- registro de dívidas com regras financeiras e histórico;
-- acompanhamento de pagamentos, estornos e saldos em aberto;
-- dashboard com indicadores operacionais;
-- autenticação e acesso restrito para administradores;
-- upload e gestão de documentos e fotos;
+- cadastro e gestão de devedores PF e PJ;
+- registro de dívidas, pagamentos, estornos e saldos em aberto;
+- acompanhamento financeiro por indicadores operacionais;
+- controle de acesso por perfil administrativo;
+- upload e gerenciamento de documentos e fotos;
 - auditoria e rastreabilidade de movimentações;
-- integração com ViaCEP para preenchimento de endereço.
+- preenchimento automático de endereço via ViaCEP.
 
 ## Funcionalidades
 
 ### Autenticação e segurança
-- Login com e-mail e senha;
+
+- login com e-mail e senha;
 - recuperação e redefinição de senha;
-- redirecionamento de rotas para usuários não autenticados;
+- redirecionamento para rotas protegidas;
 - controle de acesso por perfil administrativo;
-- integração com Supabase Auth com políticas de segurança e RLS.
+- autenticação integrada ao Supabase Auth;
+- proteção de dados com RLS e políticas do banco.
 
 ### Gestão de devedores
+
 - cadastro de pessoa física e jurídica;
 - edição e inativação de registros;
 - validação de CPF/CNPJ;
 - busca por nome, documento e telefone;
-- suporte a endereço automático via ViaCEP.
+- suporte a preenchimento automático de endereço.
 
 ### Gestão de dívidas e pagamentos
+
 - criação e edição de dívidas associadas ao devedor;
 - cálculo automático de saldo em aberto;
 - registro de pagamentos parciais e totais;
-- histórico de movimentações financeiras;
-- processamento transacional para reduzir inconsistências;
-- rastreabilidade de estornos e correções.
+- histórico completo de movimentações financeiras;
+- rastreabilidade de estornos e correções;
+- consistência transacional para reduzir inconsistências.
 
 ### Dashboard e monitoramento
+
 - indicadores financeiros e operacionais;
 - visão geral do volume em aberto;
 - acompanhamento de registros ativos e pendentes;
-- suporte para tomada de decisões com base em dados reais.
+- suporte à tomada de decisão com base em dados reais.
 
 ### Documentos e armazenamento
+
 - upload de fotos e documentos;
 - validação de tipos e tamanhos;
-- armazenamento com políticas de privacidade;
-- acesso controlado por URL temporária.
+- armazenamento seguro com políticas de privacidade;
+- acesso restrito com URL temporária.
 
 ## Stack tecnológica
 
@@ -67,7 +72,8 @@ A solução foi desenvolvida para atender cenários de cobrança, controle finan
   - Row Level Security (RLS)
 - ViaCEP
 - Vitest
-- GSAP e Lucide para experiência e interface
+- GSAP e Lucide
+- PDF-lib
 
 ## Estrutura do projeto
 
@@ -92,33 +98,42 @@ scipione-cred/
 ├─ package.json              # dependências e scripts
 ├─ vite.config.js            # configuração do Vite
 ├─ vitest.config.js          # configuração de testes
+├─ vitest.integration.config.js
 ├─ README.md                 # documentação principal
 ├─ TODO.md                   # backlog e pendências
-└─ plan.md                  # plano técnico
+├─ plan.md                   # plano técnico
+└─ .gitignore
 ```
 
 ## Requisitos
 
 - Node.js 20+
 - npm
-- Projeto Supabase configurado
-- Variáveis de ambiente preenchidas
+- projeto Supabase configurado
+- variáveis de ambiente preenchidas
 
 ## Configuração
 
-1. Instale as dependências:
+1. Clone o repositório e acesse a pasta:
+
+```bash
+git clone https://github.com/JS171555/scipione-cred.git
+cd scipione-cred
+```
+
+2. Instale as dependências:
 
 ```bash
 npm install
 ```
 
-2. Crie um arquivo de ambiente a partir do template:
+3. Crie o arquivo de ambiente a partir do template:
 
 ```bash
 cp .env.example .env
 ```
 
-3. Preencha as variáveis com o URL e a chave pública do projeto Supabase:
+4. Preencha as variáveis com a URL e a chave pública do projeto Supabase:
 
 ```env
 VITE_SUPABASE_URL=
@@ -126,15 +141,15 @@ VITE_SUPABASE_ANON_KEY=
 VITE_APP_URL=
 ```
 
-> Importante: nunca use chave de serviço no frontend. A aplicação foi projetada para operar com a chave anônima pública do Supabase e manter credenciais sensíveis fora do bundle.
+> Importante: nunca utilize service role ou chaves sensíveis no frontend. A aplicação foi projetada para operar com a chave anônima pública do Supabase, mantendo segredos fora do bundle.
 
-4. Configure o banco e o administrador inicial, conforme a documentação do projeto:
+5. Configure o banco e o administrador inicial, conforme a documentação do projeto:
 
 ```bash
 npm run admin:criar
 ```
 
-5. Inicie o ambiente de desenvolvimento:
+6. Inicie o ambiente de desenvolvimento:
 
 ```bash
 npm run dev
@@ -150,7 +165,7 @@ npm run test               # executa testes unitários
 npm run test:sql           # valida integrações e regras SQL
 npm run test:integracao    # executa testes de integração
 npm run admin:criar        # cria o administrador inicial
-npm run verificar:supabase # valida configuração do Supabase
+npm run verificar:supabase # valida a configuração do Supabase
 ```
 
 ## Documentação
@@ -160,7 +175,7 @@ A documentação técnica e funcional do projeto está localizada na pasta `docs
 Principais arquivos:
 
 - `docs/arquitetura.md` — visão geral da arquitetura
-- `docs/modelagem-do-banco.md` — estrutura do banco de dados
+- `docs/modelagem-do-banco.md` — estrutura do banco e regras de relacionamento
 - `docs/regras-de-negocio.md` — regras de negócio e critérios de operação
 - `docs/supabase-setup.md` — configuração do Supabase
 - `docs/testes.md` — estratégia e cobertura de testes
@@ -168,7 +183,7 @@ Principais arquivos:
 
 ## Segurança e conformidade
 
-O projeto foi pensado com foco em segurança e integridade financeira:
+O projeto foi pensado com foco em segurança, integridade financeira e rastreabilidade de operações:
 
 - autenticação obrigatória;
 - políticas de acesso definidas no banco;
@@ -181,8 +196,8 @@ O projeto foi pensado com foco em segurança e integridade financeira:
 ## Status do projeto
 
 - Versão: 0.2.0
-- Ambiente de produção: disponível em https://scipione-cred.vercel.app
-- Estado: em desenvolvimento com base em arquitetura e regras de negócio definidas
+- Ambiente de produção: https://scipione-cred.vercel.app
+- Estado: em desenvolvimento, com arquitetura e regras de negócio definidas e em evolução
 
 ## Licença
 
@@ -190,7 +205,7 @@ Nenhuma licença foi declarada no repositório até o momento.
 
 ## Contato e contribuição
 
-Este projeto foi estruturado como solução interna para a Scipione Affare. Caso você queira evoluir o sistema, basta seguir a arquitetura existente, manter a documentação atualizada e validar alterações com os scripts de testes e integração.
+Este projeto foi estruturado como solução interna para a Scipione Affare. Caso queira evoluir o sistema, mantenha a arquitetura existente, atualize a documentação e valide os fluxos de negócio antes de publicar alterações.
 
 ---
 
