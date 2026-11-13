@@ -10,7 +10,7 @@ Os ícones operacionais são Lucide, dependência já presente no projeto. A mar
 
 - Arquivo recebido: `360_F_376877408_tahYXzHkO7ZgLERw43ErDjcIVQtyTWYC.jpg` (510 × 360 px), fornecido pelo cliente.
 - Tratamento: restauração e ampliação por IA preservando o conteúdo original, seguida de leve nitidez e conversão para WebP.
-- Derivados publicados: `public/images/login-desk-1492.webp` (desktop, painel lateral) e `public/images/login-desk-800.webp` (mobile, faixa superior).
-- Variante mobile: a faixa superior passou a usar uma cena composta (800 × 516 px, WebP) a partir das duas fotografias fornecidas — o retrato emoldurado na vertical, centralizado na parede, com a mesa de trabalho em primeiro plano. O painel lateral do desktop mantém a fotografia original da mesa.
+- Derivados publicados: `public/images/login-desk-1492.webp` (desktop, painel lateral, 1280 × 1280 px) e `public/images/login-desk-800.webp` (mobile, faixa superior, 800 × 516 px).
+- Conteúdo: ambos são a mesma fotografia da mesa de trabalho, sem composição ou retrato adicional. O recorte quadrado do desktop ocupa o painel lateral e o recorte horizontal de 800 px alimenta a faixa superior mobile.
 - Uso: decorativo, servido como `alt=""` e coberto por gradiente para manter o contraste do texto.
 - Licença: a origem e o direito de uso da imagem são de responsabilidade do cliente; o arquivo não é redistribuído fora deste projeto.
