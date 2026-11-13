@@ -7,7 +7,8 @@ import { adaptarTabelas } from './tabelas.js';
 
 let adminAtual = null;
 export const definirAdminPagina = (admin) => { adminAtual = admin; };
-export const marca = () => `<span class="brand-mark" aria-hidden="true">S<span>c</span></span><span class="brand-name">SCIPIONE<span>CRED</span></span>`;
+const marcaImagem = (lado) => `<img class="brand-mark" src="/brand/selo-96.png" srcset="/brand/selo-96.png 1x, /brand/selo-192.png 2x" width="${lado}" height="${lado}" alt="" aria-hidden="true" decoding="async">`;
+export const marca = () => `${marcaImagem(44)}<span class="brand-name">SCIPIONE<span>CRED</span></span>`;
 const links = [['/', 'Dashboard', 'layout-dashboard'], ['/devedores', 'Clientes', 'users'], ['/dividas', 'Dívidas', 'receipt-text'], ['/pagamentos', 'Pagamentos', 'wallet']];
 function ativo(href) {
   const path = (location.hash.slice(1) || '/').split('?')[0];
@@ -30,7 +31,7 @@ export function pagina(raiz, { titulo, descricao = '', voltar = null, admin = ad
       <div class="sidebar-bottom">
       <button type="button" id="sair" class="logout" title="Encerrar sessão">${icon('log-out', 18)}<span>Encerrar sessão</span></button></div>
     </aside>
-    <div class="workspace"><header class="topo"><a class="mobile-brand" href="#/">SCIPIONE <span>CRED</span></a>
+    <div class="workspace"><header class="topo"><a class="mobile-brand" href="#/">${marcaImagem(30)}SCIPIONE <span>CRED</span></a>
     <div class="topo-right"><button type="button" id="sair-mobile" class="icon-button logout-mobile" aria-label="Encerrar sessão" title="Encerrar sessão">${icon('log-out', 20)}</button></div></header>
     <main class="pg" id="pagina-principal">${voltar ? `<a class="back-link" href="#${esc(voltar.href)}">${icon('arrow-left', 16)} ${esc(voltar.texto)}</a>` : ''}<div class="page-heading"><button type="button" id="recolher-menu" class="icon-button menu-toggle" aria-label="${collapsed ? 'Expandir' : 'Recolher'} menu" aria-expanded="${!collapsed}" title="${collapsed ? 'Expandir' : 'Recolher'} menu">${icon(collapsed ? 'panel-left-open' : 'panel-left-close', 20)}</button><h1>${esc(titulo)}</h1><span class="page-date">${esc(new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'America/Sao_Paulo' }).format(new Date()))}</span></div>${descricao ? `<p class="page-description">${esc(descricao)}</p>` : ''}<div id="conteudo" tabindex="-1"></div></main></div>
     <nav class="mobile-nav" aria-label="Navegação mobile">${nav}</nav></div>`;

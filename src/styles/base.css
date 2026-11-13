@@ -36,8 +36,7 @@ strong { font-weight: 600; }
 .app-shell { min-height: 100dvh; }
 .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 20; width: var(--sidebar-width); padding: 34px 20px 20px; background: #111110; border-right: 1px solid var(--borda); display: flex; flex-direction: column; transition: width var(--transition); }
 .brand { display: flex; align-items: center; gap: 14px; color: var(--marfim); text-decoration: none; padding: 0 6px; margin-bottom: 34px; }
-.brand-mark { position: relative; flex-shrink: 0; width: 39px; height: 44px; display: grid; place-items: center; font: 44px/1 var(--font-display); color: var(--ouro); border: 1px solid var(--borda); border-radius: 3px; }
-.brand-mark span { position: absolute; right: 4px; bottom: 0; font: italic 23px/1 var(--font-display); color: var(--marfim); }
+.brand-mark { flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; filter: drop-shadow(0 6px 16px rgb(0 0 0 / 45%)); }
 .brand-name { display: flex; flex-direction: column; font: 23px/1.05 var(--font-display); letter-spacing: .06em; }
 .brand-name > span { font: 10px/2 var(--font-body); letter-spacing: .43em; color: var(--ouro); }
 .sidebar-nav { display: flex; flex-direction: column; gap: 7px; }
@@ -283,7 +282,8 @@ dd { margin: 0; overflow-wrap: anywhere; }
   .workspace { margin: 0; }
   .topo { height: 68px; padding: 0 20px; position: sticky; top: 0; z-index: 15; }
   #recolher-menu, .topo-context, .access-label { display: none; }
-  .mobile-brand { display: block; color: var(--marfim); text-decoration: none; font: 21px var(--font-display); letter-spacing: .06em; }
+  .mobile-brand { display: flex; align-items: center; gap: 10px; color: var(--marfim); text-decoration: none; font: 21px var(--font-display); letter-spacing: .06em; }
+  .mobile-brand .brand-mark { width: 30px; height: 30px; }
   .mobile-brand span { color: var(--ouro); }
   .logout-mobile { display: inline-flex; width: 44px; min-height: 44px; justify-content: center; }
   .pg { padding: 26px 20px calc(100px + env(safe-area-inset-bottom)); }
@@ -348,7 +348,7 @@ dd { margin: 0; overflow-wrap: anywhere; }
   .auth-story h2 { font-size: 36px; margin: 26px 0 16px; }
   .auth-story > footer, .auth-story > small { display: none; }
   .auth-story p { margin-bottom: 0; }
-  .auth-story .brand-mark { width: 30px; height: 34px; font-size: 32px; }
+  .auth-story .brand-mark { width: 60px; height: 60px; }
   .auth-story .brand-name { font-size: 20px; }
   .auth { width: 100%; max-width: 440px; margin: 14px auto; padding: 26px 24px 40px; }
   .auth h1 { font-size: 34px; }

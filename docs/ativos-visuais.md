@@ -4,7 +4,15 @@ A interface usa Cormorant Garamond nos títulos institucionais e DM Sans nos con
 
 Fontes oficiais verificadas em 12 de novembro de 2026: https://fonts.google.com/specimen/Cormorant+Garamond e https://fonts.google.com/specimen/DM+Sans. Arquivos obtidos pela API Google Fonts e licenças pelo repositório google/fonts.
 
-Os ícones operacionais são Lucide, dependência já presente no projeto. A marca é tipográfica com monograma CSS e ícone PWA vetorial local. Não são utilizadas fotografias de clientes reais, imagens de banco de imagens ou ilustrações decorativas.
+Os ícones operacionais são Lucide, dependência já presente no projeto. Não são utilizadas fotografias de clientes reais, imagens de banco de imagens ou ilustrações decorativas.
+
+## Marca
+- Origem: fotografia do chapéu e da gravata enviada pelo cliente (`D_NQ_NP_642061-MLA104241562614_012026-O-fantasia-gangster-mafia-chapeu-suspensorio-gravata-3pcs.webp`, 500 × 500 px), arquivada em `tools/origem/chapeu.webp`.
+- Tratamento: recorte quadrado sobre o chapéu e a gravata, leve vinheta para fundir as bordas ao tema escuro e aro duplo (escuro por fora, dourado por dentro) formando um medalhão circular. A fotografia não é redesenhada nem convertida em vetor.
+- Geração: `python3 tools/marca.py` grava todos os derivados a partir do arquivo original (requer apenas Pillow).
+- Aplicação na interface: medalhão de 44 px na barra lateral, 30 px no cabeçalho mobile e 60 px no painel do login, sempre com o texto alternativo vazio porque a marca é decorativa e o nome está escrito ao lado.
+- Instalação (PWA): `public/icons/icon-192.png` e `public/icons/icon-512.png` usam a foto inteira; `icon-512-maskable.png` traz o medalhão sobre `#080808` dentro da área segura de recorte; `apple-touch-icon.png` (180 px) repete a foto inteira; `favicon-32.png` usa o medalhão.
+- Licença: a origem e o direito de uso da imagem são de responsabilidade do cliente; o arquivo não é redistribuído fora deste projeto.
 
 ## Fotografia do login
 

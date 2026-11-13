@@ -1,6 +1,6 @@
 // Não habilita modo demo na aplicação. Interceptação existe somente no navegador de teste.
 // PLAYWRIGHT_MODULE pode apontar para uma instalação externa de playwright.
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import assert from 'node:assert/strict';
 const modulePath = process.env.PLAYWRIGHT_MODULE;
@@ -37,19 +37,16 @@ await context.route('**/src/services/*.js*', async route=>{
 const page=await context.newPage();
 let errors=[];
 page.on('pageerror', e=>errors.push(e.message));
-// PWA icons are deterministic renditions of the actual UI monogram.
+// A marca é um ativo da pasta public/brand: os ícones da PWA são conferidos no tamanho final.
+const dimensoesPng = (buffer) => ({ largura: buffer.readUInt32BE(16), altura: buffer.readUInt32BE(20) });
+for (const [arquivo, lado] of [['public/brand/selo-96.png', 96], ['public/brand/selo-192.png', 192], ['public/icons/icon-192.png', 192], ['public/icons/icon-512.png', 512], ['public/icons/icon-512-maskable.png', 512], ['public/icons/apple-touch-icon.png', 180]]) {
+  const buffer = await readFile(arquivo).catch(() => null);
+  assert(buffer, `Ativo de marca ausente: ${arquivo}`);
+  const { largura, altura } = dimensoesPng(buffer);
+  assert(largura === lado && altura === lado, `${arquivo} deve ter ${lado}x${lado} (tem ${largura}x${altura})`);
+}
 await page.goto(origin);
 await page.waitForSelector('.brand-mark');
-await page.evaluate(async()=>{
-  const {marca}=await import('/src/components/pagina.js');
-  document.body.innerHTML=`<div id="app-icon">${marca()}</div>`;
-  const style=document.createElement('style');style.textContent='#app-icon{width:512px;height:512px;background:#080808;display:grid;place-items:center}#app-icon .brand-name{display:none}#app-icon .brand-mark{width:244px;height:272px;font-size:260px;border-width:3px;border-color:#34302a;border-radius:12px}#app-icon .brand-mark span{font-size:138px;right:20px;bottom:12px}';document.head.append(style);await document.fonts.ready;
-});
-await page.locator('#app-icon').screenshot({path:'public/icons/icon-512.png'});
-await page.setViewportSize({width:192,height:192});
-await page.addStyleTag({content:'#app-icon{transform:scale(.375);transform-origin:top left}body{width:192px;height:192px;overflow:hidden}'});
-await page.screenshot({path:'public/icons/icon-192.png'});
-await page.goto(`${origin}/?visual-reset=1`);
 const routes=[['dashboard','/','.cards'],['clientes','/devedores','#tabela table'],['cadastro','/devedores/novo','#nome_razao_social'],['perfil',`/devedores/${d.id}`,'.profile-header'],['editar',`/devedores/${d.id}/editar`,'#nome_razao_social'],['divida',`/devedores/${d.id}/dividas/nova`,'#valor'],['pagamento',`/dividas/${v.id}/pagamento`,'#saldo-apos'],['dividas','/dividas','#tabela table'],['pagamentos','/pagamentos','#tabela table'],['seletor-cliente','/dividas/nova','[data-selecao] table'],['seletor-divida','/pagamentos/novo','[data-selecao] table'],['login','/login','#senha'],['recuperar','/recuperar-senha','#email'],['redefinir','/redefinir-senha','#s1']];
 const widths=[320,390,768,1024,1440];
 let checks=[];

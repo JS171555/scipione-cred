@@ -15,7 +15,7 @@ await page.goto(origin);
 await page.waitForSelector('#auth-title');
 assert((await page.locator('body').innerText()).includes('Configuração pendente'));
 assert.equal(await page.locator('input[type="password"]').count(),0,'Configuração ausente não libera login nem dados');
-for(const file of ['/manifest.webmanifest','/icons/icon-192.png','/icons/icon-512.png','/sw.js','/fonts/dm-sans.css','/fonts/cormorant-garamond.css']){
+for(const file of ['/manifest.webmanifest','/icons/icon-192.png','/icons/icon-512.png','/icons/icon-512-maskable.png','/icons/apple-touch-icon.png','/icons/favicon-32.png','/brand/selo-96.png','/sw.js','/fonts/dm-sans.css','/fonts/cormorant-garamond.css']){
  const response=await page.request.get(origin+file);assert.equal(response.status(),200,file);
 }
 await page.evaluate(()=>navigator.serviceWorker.ready);
