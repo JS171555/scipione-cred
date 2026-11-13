@@ -11,7 +11,7 @@ Os ícones operacionais são Lucide, dependência já presente no projeto. Não 
 - Tratamento: recorte quadrado sobre o chapéu e a gravata, leve vinheta para fundir as bordas ao tema escuro e aro duplo (escuro por fora, dourado por dentro) formando um medalhão circular. A fotografia não é redesenhada nem convertida em vetor.
 - Geração: `python3 tools/marca.py` grava todos os derivados a partir do arquivo original (requer apenas Pillow).
 - Aplicação na interface: medalhão de 44 px na barra lateral, 30 px no cabeçalho mobile e 60 px no painel do login, sempre com o texto alternativo vazio porque a marca é decorativa e o nome está escrito ao lado.
-- Instalação (PWA): `public/icons/icon-192.png` e `public/icons/icon-512.png` usam a foto inteira; `icon-512-maskable.png` traz o medalhão sobre `#080808` dentro da área segura de recorte; `apple-touch-icon.png` (180 px) repete a foto inteira; `favicon-32.png` usa o medalhão.
+- Instalação (PWA): `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (180 px) e `favicon-32.png` são a fotografia inteira, quadrada, sem aro e sem recorte redondo. O ícone de 512 px é declarado como `any maskable`, então o sistema aplica a própria máscara sobre a foto.
 - Licença: a origem e o direito de uso da imagem são de responsabilidade do cliente; o arquivo não é redistribuído fora deste projeto.
 
 ## Fotografia do login

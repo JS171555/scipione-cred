@@ -75,14 +75,9 @@ def medalhao(foto: Image.Image, lado: int) -> Image.Image:
     return final
 
 
-def icone(foto: Image.Image, lado: int, folga: float = 0.0) -> Image.Image:
-    """Ícone instalável: foto quadrada (ou com margem) sobre o fundo do tema."""
-    if folga:
-        interno = round(lado * (1 - folga * 2))
-        fundo = Image.new('RGB', (lado, lado), FUNDO)
-        fundo.paste(_vinheta(_quadrada(foto, interno), 0.35), (round(lado * folga), round(lado * folga)))
-        return fundo
-    return _vinheta(_quadrada(foto, lado), 0.3)
+def icone(foto: Image.Image, lado: int) -> Image.Image:
+    """Ícone instalável: a fotografia inteira, quadrada, sem aro e sem recorte redondo."""
+    return _quadrada(foto, lado)
 
 
 def main() -> None:
@@ -95,13 +90,8 @@ def main() -> None:
 
     icone(foto, 192).save(ICONES / 'icon-192.png')
     icone(foto, 512).save(ICONES / 'icon-512.png')
-    # maskable: selo circular sobre o fundo do tema, dentro da área segura do sistema
-    maskable = Image.new('RGBA', (512, 512), FUNDO + (255,))
-    selo = medalhao(foto, 400)
-    maskable.alpha_composite(selo, ((512 - 400) // 2, (512 - 400) // 2))
-    maskable.convert('RGB').save(ICONES / 'icon-512-maskable.png')
     icone(foto, 180).save(ICONES / 'apple-touch-icon.png')
-    medalhao(foto, 32).save(ICONES / 'favicon-32.png')
+    icone(foto, 32).save(ICONES / 'favicon-32.png')
     print('marca gerada em public/brand e public/icons')
 
 
