@@ -4,7 +4,7 @@ import { CATEGORIAS, formatarTamanho, validarArquivo } from '../utils/files.js';
 import { obterLimitesUpload } from '../services/configuracoes.js';
 
 const nomes = {
-  foto: 'PNG, JPG, JPEG ou AVIF',
+  foto: 'PNG, JPG, JPEG, AVIF ou WEBP',
   documento: 'PNG, JPG, JPEG, AVIF, WEBP ou PDF',
   comprovante: 'PNG, JPG, JPEG, AVIF, WEBP ou PDF',
 };

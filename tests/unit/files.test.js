@@ -15,10 +15,10 @@ describe('validarArquivo', () => {
     expect((await validarArquivo(arq('f.avif', AVIF, 'image/avif'), 'foto')).valido).toBe(true);
     expect((await validarArquivo(arq('d.pdf', PDF, 'application/pdf'), 'documento')).valido).toBe(true);
     expect((await validarArquivo(arq('d.webp', WEBP, 'image/webp'), 'comprovante')).valido).toBe(true);
+    expect((await validarArquivo(arq('f.webp', WEBP, 'image/webp'), 'foto')).valido).toBe(true);
   });
-  it('foto não aceita PDF nem WEBP', async () => {
+  it('foto não aceita PDF', async () => {
     expect((await validarArquivo(arq('d.pdf', PDF, 'application/pdf'), 'foto')).valido).toBe(false);
-    expect((await validarArquivo(arq('d.webp', WEBP, 'image/webp'), 'foto')).valido).toBe(false);
   });
   it('rejeita extensão proibida e dupla extensão', async () => {
     expect((await validarArquivo(arq('x.exe', PNG, ''), 'documento')).valido).toBe(false);

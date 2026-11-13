@@ -153,5 +153,6 @@ Políticas em `storage.objects`: `is_admin()` para select/insert/update/delete p
 9. `20261111000009_configuracoes` — limites de upload sincronizados com os buckets
 10. `20261112000010_indices_listagem` — índices para ordenação/paginação e agregação por devedor (aditiva; **aplicar no projeto já existente**)
 11. `20261113000011_exclusao_divida_sem_pagamentos` — RPC `excluir_divida(uuid)` para apagar dívida **sem nenhum pagamento**, com registro `DELETE` na auditoria; nenhum GRANT de DELETE é concedido (aditiva; **aplicar no projeto já existente**)
+12. `20261113000012_webp_em_fotos` — libera `image/webp` no bucket `fotos-devedores`, formato resultante da conversão feita no navegador (aditiva; **aplicar no projeto já existente**)
 
 Ajustes em relação ao plano da Etapa 1: documentos e comprovantes não podem ser apagados/sobrescritos no Storage (só fotos, por causa da troca); `devedores_foto_path_valido`, `devedor_documentos_path_valido` e `pagamentos_comprovante_valido` amarram cada arquivo à pasta do próprio devedor/dívida.

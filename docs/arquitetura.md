@@ -89,7 +89,7 @@ scipione-cred/
 ├─ src/
 │  ├─ main.js
 │  ├─ core/                   supabase.js, config.js, router.js, errors.js, state.js
-│  ├─ utils/                  cpf-cnpj.js, money.js, dates.js, password.js, files.js
+│  ├─ utils/                  cpf-cnpj.js, money.js, dates.js, password.js, files.js, midia.js
 │  ├─ services/               auth, devedores, documentos, dividas, pagamentos, dashboard, viacep, auditoria
 │  ├─ modules/                uma pasta por tela: login, dashboard, devedores, devedor-form, devedor-perfil, divida-form, pagamento-form
 │  ├─ components/             tabela, modal de confirmação, toasts, uploader, campo de moeda

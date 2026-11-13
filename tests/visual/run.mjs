@@ -126,6 +126,29 @@ const acoes1280=await page.$$eval('td[data-label="Ações"] .acoes-linha > *',el
 assert(new Set(acoes1280).size===1,'Botões de ação devem manter o mesmo tamanho em 1280');
 assert(await page.evaluate(()=>{const r=document.querySelector('#tabela .rolagem');return r.scrollWidth<=r.clientWidth+1;}),'Tabela de dívidas não deve rolar na horizontal em 1280');
 await page.setViewportSize({width:1440,height:1000});
+// Conversão de mídia: imagem vira WebP e PDF é reotimizado antes do upload.
+const midia=await page.evaluate(async()=>{
+  const {prepararArquivo}=await import('/src/utils/midia.js');
+  const canvas=document.createElement('canvas');canvas.width=2400;canvas.height=1600;
+  const ctx=canvas.getContext('2d');const grad=ctx.createLinearGradient(0,0,2400,1600);
+  grad.addColorStop(0,'#101010');grad.addColorStop(1,'#b89a62');ctx.fillStyle=grad;ctx.fillRect(0,0,2400,1600);
+  for(let i=0;i<600;i+=1){ctx.fillStyle=`hsl(${(i*7)%360},45%,55%)`;ctx.fillRect((i*37)%2400,(i*53)%1600,70,45);}
+  const png=await new Promise((r)=>canvas.toBlob(r,'image/png'));
+  const imagem=await prepararArquivo(new File([png],'foto-teste.png',{type:'image/png'}),'foto');
+  return {png:png.size,webp:imagem.arquivo.size,tipo:imagem.arquivo.type,nome:imagem.arquivo.name,convertido:imagem.convertido};
+});
+assert(midia.tipo==='image/webp',`Imagem deve ser convertida para WebP (recebido: ${midia.tipo})`);
+assert(midia.nome==='foto-teste.webp',`Nome convertido deve ser foto-teste.webp (recebido: ${midia.nome})`);
+assert(midia.convertido&&midia.webp<midia.png,`WebP (${midia.webp}) deve ser menor que o PNG (${midia.png})`);
+const pdfBase64=(await page.pdf({format:'A4'})).toString('base64');
+const pdf=await page.evaluate(async(b64)=>{
+  const bytes=Uint8Array.from(atob(b64),(c)=>c.charCodeAt(0));
+  const {prepararArquivo}=await import('/src/utils/midia.js');
+  const r=await prepararArquivo(new File([bytes],'contrato.pdf',{type:'application/pdf'}),'documento');
+  return {original:bytes.length,final:r.arquivo.size,tipo:r.arquivo.type};
+},pdfBase64);
+assert(pdf.tipo==='application/pdf','PDF deve continuar PDF depois da otimização');
+assert(pdf.final<=pdf.original,`PDF otimizado (${pdf.final}) não pode ficar maior que o original (${pdf.original})`);
 await page.goto(`${origin}/#/pagamentos`);await page.waitForSelector('#tabela table');
 await page.evaluate(()=>{window.__mockError=true;});await page.locator('#limpar').click();await page.waitForSelector('#tabela .error-state');
 await page.evaluate(()=>{window.__mockError=false;});await page.locator('[data-retry]').click();await page.waitForSelector('#tabela table');

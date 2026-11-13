@@ -20,7 +20,7 @@ Legenda: **[Escopo]** definido no documento/prompt · **[Adotada]** decisão con
 - RN-18 [Adotada] Devedor não é excluído fisicamente na v1 (só inativado).
 
 ## Arquivos
-- RN-20 [Escopo] Foto: PNG, JPG, JPEG, AVIF. Documentos: PNG, JPG, JPEG, AVIF, PDF, WEBP. Comprovante: [Adotada] mesmos formatos dos documentos.
+- RN-20 [Adotada] Foto: PNG, JPG, JPEG, AVIF, WEBP. Documentos: PNG, JPG, JPEG, AVIF, PDF, WEBP. Comprovante: [Adotada] mesmos formatos dos documentos. Toda imagem enviada é convertida para WebP (maior lado 1600 px na foto, 2200 px em documentos/comprovantes) e PDFs são reotimizados sem perda; se a conversão não reduzir o arquivo, o original é mantido.
 - RN-21 Validar extensão **e** MIME, e tamanho. [Adotada] limites padrão: foto 5 MB, documento 10 MB, comprovante 10 MB; configuráveis na tabela `configuracoes`.
 - RN-22 [Escopo] Armazenamento privado; acesso por URL assinada de curta duração.
 - RN-23 [Adotada] Substituir foto troca a referência e remove o arquivo antigo do Storage; documentos removidos ficam com `removido_em` (soft delete) e a remoção é auditada.

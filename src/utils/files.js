@@ -1,14 +1,15 @@
 // Validação de arquivos: extensão + MIME + assinatura binária (magic bytes) + tamanho.
 const MB = 1024 * 1024;
 const IMG = ['png', 'jpg', 'jpeg', 'avif'];
-const DOC = [...IMG, 'webp', 'pdf'];
+const FOTO = [...IMG, 'webp'];
+const DOC = [...FOTO, 'pdf'];
 
 export const MIME_POR_EXTENSAO = {
   png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', avif: 'image/avif', webp: 'image/webp', pdf: 'application/pdf',
 };
 
 export const CATEGORIAS = {
-  foto:        { bucket: 'fotos-devedores',         extensoes: IMG, chaveLimite: 'upload.foto_max_bytes',        limitePadrao: 5 * MB },
+  foto:        { bucket: 'fotos-devedores',         extensoes: FOTO, chaveLimite: 'upload.foto_max_bytes',       limitePadrao: 5 * MB },
   documento:   { bucket: 'documentos-devedores',    extensoes: DOC, chaveLimite: 'upload.documento_max_bytes',   limitePadrao: 10 * MB },
   comprovante: { bucket: 'comprovantes-pagamentos', extensoes: DOC, chaveLimite: 'upload.comprovante_max_bytes', limitePadrao: 10 * MB },
 };
