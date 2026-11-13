@@ -301,6 +301,7 @@ dd { margin: 0; overflow-wrap: anywhere; }
   .filtros, .filter-bar { padding: 16px; gap: 14px; }
   .filtros label, .filter-bar label { min-width: 100%; }
   .filtro-toggle { display: inline-flex; }
+  .list-toolbar > .btn, .list-toolbar .filtro-toggle { min-height: 46px; }
   .filtros[data-aberto="false"] { display: none; }
   .grade { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .form-panel { padding: 20px; }

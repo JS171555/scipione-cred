@@ -67,6 +67,26 @@ describe('listas financeiras globais', () => {
     expect(raiz.querySelector('a[href="#/dividas/' + DIV + '/pagamento"]')).toBeTruthy();
   });
 
+  it('recolhe os filtros atrás do botão nas listas financeiras', async () => {
+    dividas.listarPagina.mockResolvedValue(pagina([]));
+    pagamentos.listarPagina.mockResolvedValue(pagina([]));
+    for (const render of [renderListaDividas, renderListaPagamentos]) {
+      document.body.innerHTML = '<div id="app"></div>';
+      raiz = document.getElementById('app');
+      await render(raiz, {});
+      await vi.waitFor(() => expect(raiz.querySelector('#tabela')).toBeTruthy());
+      const botao = raiz.querySelector('#filtro-toggle');
+      const painel = raiz.querySelector('#filtros-painel');
+      expect(botao).toBeTruthy();
+      expect(painel.dataset.aberto).toBe('false');
+      botao.click();
+      expect(painel.dataset.aberto).toBe('true');
+      expect(botao.getAttribute('aria-expanded')).toBe('true');
+      botao.click();
+      expect(painel.dataset.aberto).toBe('false');
+    }
+  });
+
   it('mostra retry nos estados de erro', async () => {
     dividas.listarPagina.mockRejectedValueOnce({ code: '42501', message: 'permission denied' });
     await renderListaDividas(raiz, {});

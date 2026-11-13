@@ -5,6 +5,7 @@ import { formatarData, formatarDataHora } from '../utils/dates.js';
 import { traduzirErro } from '../core/errors.js';
 import { esc } from '../core/dom.js';
 import { loadingState, emptyState, errorState } from '../components/states.js';
+import { botaoFiltros, instalarBotaoFiltros } from '../components/filtros.js';
 
 const POR_PAGINA = 20;
 const estados = {
@@ -66,8 +67,8 @@ export async function renderListaPagamentos(raiz, { consulta = new URLSearchPara
     pagina: Math.max(1, Number.parseInt(consulta.get('p'), 10) || 1),
   };
   el.innerHTML = `<div class="list-toolbar barra"><label class="search-field"><span class="sr-only">Buscar pagamentos</span><input id="busca" type="search" aria-label="Buscar pagamentos" placeholder="Buscar cliente ou descrição da dívida" value="${esc(estado.busca)}"></label>
-      <a class="btn" href="#/pagamentos/novo">Registrar pagamento</a></div>
-    <div class="filter-bar filtros"><label>Situação<select id="f-status">${opc([['', 'Todos'], ['valido', 'Válidos'], ['estornado', 'Estornados']], estado.status)}</select></label>
+      <a class="btn" href="#/pagamentos/novo">Registrar pagamento</a>${botaoFiltros()}</div>
+    <div class="filter-bar filtros" id="filtros-painel" data-aberto="false"><label>Situação<select id="f-status">${opc([['', 'Todos'], ['valido', 'Válidos'], ['estornado', 'Estornados']], estado.status)}</select></label>
       <label>Ordenar por<select id="f-ordem">${opc([['recentes', 'Mais recentes'], ['antigos', 'Mais antigos']], estado.ordem)}</select></label>
       <button type="button" id="limpar" class="sec peq">Limpar filtros</button></div>
     <div id="tabela" data-lista="pagamentos" aria-live="polite">${estados.loading()}</div><div id="paginacao" class="paginacao"></div>`;
@@ -95,6 +96,7 @@ export async function renderListaPagamentos(raiz, { consulta = new URLSearchPara
       q('#tabela').innerHTML = itens.length
         ? `<div class="rolagem"><table class="financial-table"><thead><tr><th>Cliente</th><th>Dívida</th><th>Data</th><th class="num">Valor</th><th>Situação</th><th>Observação</th><th>Ações</th></tr></thead><tbody>${itens.map(linha).join('')}</tbody></table></div>`
         : estados.empty(estado.busca || estado.status ? 'Nenhum pagamento encontrado com estes filtros.' : 'Nenhum pagamento registrado ainda.');
+      sincronizarFiltros();
       q('#paginacao').innerHTML = paginacao(resposta);
     } catch (erro) {
       if (atual !== sequencia || signal?.aborted || !el.isConnected) return;
@@ -102,11 +104,13 @@ export async function renderListaPagamentos(raiz, { consulta = new URLSearchPara
       q('#paginacao').innerHTML = '';
     }
   };
+  const marcarFiltrosAtivos = instalarBotaoFiltros(el);
   const mudou = () => { estado.pagina = 1; carregar(); };
   let timer;
   q('#busca').addEventListener('input', (event) => { estado.busca = event.target.value.trim(); clearTimeout(timer); timer = setTimeout(mudou, 300); });
   q('#f-status').addEventListener('change', (event) => { estado.status = event.target.value; mudou(); });
   q('#f-ordem').addEventListener('change', (event) => { estado.ordem = event.target.value; mudou(); });
+  const sincronizarFiltros = () => marcarFiltrosAtivos(estado.status || estado.ordem !== 'recentes');
   q('#limpar').addEventListener('click', () => { estado.busca = ''; estado.status = ''; estado.ordem = 'recentes'; q('#busca').value = ''; q('#f-status').value = ''; q('#f-ordem').value = 'recentes'; mudou(); });
   q('#paginacao').addEventListener('click', (event) => { const botao = event.target.closest('[data-pg]'); if (botao && !botao.disabled) { estado.pagina = Number(botao.dataset.pg); carregar(); } });
   q('#tabela').addEventListener('click', async (event) => {

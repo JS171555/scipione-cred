@@ -78,12 +78,12 @@ describe('lista: filtros, ordenação e paginação', () => {
     await vi.waitFor(() => expect(devedores.listarPagina).toHaveBeenCalled());
     const botao = $('#filtro-toggle');
     expect(botao.getAttribute('aria-expanded')).toBe('false');
-    expect($('#filtros-clientes').dataset.aberto).toBe('false');
+    expect($('#filtros-painel').dataset.aberto).toBe('false');
     botao.click();
     expect(botao.getAttribute('aria-expanded')).toBe('true');
-    expect($('#filtros-clientes').dataset.aberto).toBe('true');
+    expect($('#filtros-painel').dataset.aberto).toBe('true');
     botao.click();
-    expect($('#filtros-clientes').dataset.aberto).toBe('false');
+    expect($('#filtros-painel').dataset.aberto).toBe('false');
     muda('#f-status', 'ativo');
     await vi.waitFor(() => expect(botao.dataset.ativos).toBe('true'));
   });

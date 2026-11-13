@@ -5,6 +5,7 @@ import { formatarData } from '../utils/dates.js';
 import { traduzirErro } from '../core/errors.js';
 import { esc } from '../core/dom.js';
 import { loadingState, emptyState, errorState } from '../components/states.js';
+import { botaoFiltros, instalarBotaoFiltros } from '../components/filtros.js';
 
 const POR_PAGINA = 20;
 const ORDENS = new Set(['recentes', 'antigos', 'vencimento']);
@@ -55,8 +56,8 @@ export async function renderListaDividas(raiz, { consulta = new URLSearchParams(
     pagina: Math.max(1, Number.parseInt(consulta.get('p'), 10) || 1),
   };
   el.innerHTML = `<div class="list-toolbar barra"><label class="search-field"><span class="sr-only">Buscar dívidas</span><input id="busca" type="search" aria-label="Buscar dívidas" placeholder="Buscar cliente ou descrição" value="${esc(estado.busca)}"></label>
-      <a class="btn" href="#/dividas/nova">Nova dívida</a></div>
-    <div class="filter-bar filtros"><label>Status<select id="f-status">${opc([['', 'Todas'], ['em_aberto', 'Em aberto'], ['quitada', 'Quitadas']], estado.status)}</select></label>
+      <a class="btn" href="#/dividas/nova">Nova dívida</a>${botaoFiltros()}</div>
+    <div class="filter-bar filtros" id="filtros-painel" data-aberto="false"><label>Status<select id="f-status">${opc([['', 'Todas'], ['em_aberto', 'Em aberto'], ['quitada', 'Quitadas']], estado.status)}</select></label>
       <label>Ordenar por<select id="f-ordem">${opc([['recentes', 'Mais recentes'], ['antigos', 'Mais antigas'], ['vencimento', 'Vencimento']], estado.ordem)}</select></label>
       <button type="button" id="limpar" class="sec peq">Limpar filtros</button></div>
     <div id="tabela" data-lista="dividas" aria-live="polite">${estados.loading()}</div><div id="paginacao" class="paginacao"></div>`;
@@ -84,6 +85,7 @@ export async function renderListaDividas(raiz, { consulta = new URLSearchParams(
       q('#tabela').innerHTML = itens.length
         ? `<div class="rolagem"><table class="financial-table"><thead><tr><th>Cliente</th><th>Descrição</th><th>Registro</th><th>Vencimento</th><th class="num">Original</th><th class="num">Saldo</th><th>Status</th><th>Ações</th></tr></thead><tbody>${itens.map(linha).join('')}</tbody></table></div>`
         : estados.empty(estado.busca || estado.status ? 'Nenhuma dívida encontrada com estes filtros.' : 'Nenhuma dívida registrada ainda.');
+      sincronizarFiltros();
       q('#paginacao').innerHTML = paginacao(resposta);
     } catch (erro) {
       if (atual !== sequencia || signal?.aborted || !el.isConnected) return;
@@ -91,11 +93,13 @@ export async function renderListaDividas(raiz, { consulta = new URLSearchParams(
       q('#paginacao').innerHTML = '';
     }
   };
+  const marcarFiltrosAtivos = instalarBotaoFiltros(el);
   const mudou = () => { estado.pagina = 1; carregar(); };
   let timer;
   q('#busca').addEventListener('input', (event) => { estado.busca = event.target.value.trim(); clearTimeout(timer); timer = setTimeout(mudou, 300); });
   q('#f-status').addEventListener('change', (event) => { estado.status = event.target.value; mudou(); });
   q('#f-ordem').addEventListener('change', (event) => { estado.ordem = event.target.value; mudou(); });
+  const sincronizarFiltros = () => marcarFiltrosAtivos(estado.status || estado.ordem !== 'recentes');
   q('#limpar').addEventListener('click', () => { estado.busca = ''; estado.status = ''; estado.ordem = 'recentes'; q('#busca').value = ''; q('#f-status').value = ''; q('#f-ordem').value = 'recentes'; mudou(); });
   q('#paginacao').addEventListener('click', (event) => { const botao = event.target.closest('[data-pg]'); if (botao && !botao.disabled) { estado.pagina = Number(botao.dataset.pg); carregar(); } });
   q('#tabela').addEventListener('click', (event) => { if (event.target.closest('[data-retry], [data-acao="retry"]')) carregar(); });

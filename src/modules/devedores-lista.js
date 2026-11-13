@@ -5,7 +5,7 @@ import { esc, $, mostrarMensagem } from '../core/dom.js';
 import { formatarDocumento, formatarTelefone } from '../utils/cpf-cnpj.js';
 import { formatarBRL } from '../utils/money.js';
 import { loadingState, emptyState, errorState } from '../components/states.js';
-import { icon } from '../components/icons.js';
+import { botaoFiltros, instalarBotaoFiltros } from '../components/filtros.js';
 
 const POR_PAGINA = 20;
 const opcoes = (lista, atual) => lista.map(([v, t]) => `<option value="${v}" ${v === atual ? 'selected' : ''}>${esc(t)}</option>`).join('');
@@ -23,9 +23,8 @@ export async function renderListaDevedores(raiz, { consulta = new URLSearchParam
     ordem: ORDENS[consulta.get('ordem')] ? consulta.get('ordem') : 'nome_asc', p: Math.max(1, parseInt(consulta.get('p'), 10) || 1),
   };
   el.innerHTML = `<div class="list-toolbar barra"><label class="search-field"><span class="sr-only">Buscar clientes</span><input id="busca" type="search" placeholder="Buscar por nome, CPF, CNPJ, RG ou telefone" aria-label="Buscar" value="${esc(estado.q)}"></label>
-      <a class="btn" data-ui-copy href="#/devedores/novo">Novo devedor</a>
-      <button type="button" class="btn sec peq filtro-toggle" id="filtro-toggle" aria-expanded="false" aria-controls="filtros-clientes">${icon('sliders-horizontal', 15)} Filtros</button></div>
-    <div class="filter-bar filtros" id="filtros-clientes" data-aberto="false">
+      <a class="btn" data-ui-copy href="#/devedores/novo">Novo devedor</a>${botaoFiltros()}</div>
+    <div class="filter-bar filtros" id="filtros-painel" data-aberto="false">
       <label>Situação do cadastro<select id="f-status">${opcoes([['', 'Todos'], ['ativo', 'Clientes ativos'], ['inativo', 'Clientes inativos']], estado.status)}</select></label>
       <label>Situação das dívidas<select id="f-situacao">${opcoes([['', 'Todas'], ['em_aberto', 'Com dívidas em aberto'], ['quitados', 'Dívidas quitadas (nenhuma em aberto)']], estado.situacao)}</select></label>
       <label>Ordenar por<select id="f-ordem">${opcoes([['nome_asc', 'Nome (A–Z)'], ['nome_desc', 'Nome (Z–A)'], ['recentes', 'Cadastros mais recentes'], ['antigos', 'Cadastros mais antigos']], estado.ordem)}</select></label>
@@ -48,7 +47,7 @@ export async function renderListaDevedores(raiz, { consulta = new URLSearchParam
       estado.p = r.pagina; gravarUrl();
       mostrarMensagem($('#msg'), '');
       const filtrando = estado.q || estado.status || estado.situacao;
-      botaoFiltros?.setAttribute('data-ativos', String(Boolean(estado.status || estado.situacao || estado.ordem !== 'nome_asc')));
+      marcarFiltrosAtivos(estado.status || estado.situacao || estado.ordem !== 'nome_asc');
       $('#tabela').innerHTML = r.itens.length ? `<div class="rolagem"><table class="financial-table"><thead><tr><th></th><th>Nome / razão social</th><th>CPF/CNPJ</th><th>Contato</th><th>Status</th><th class="num">Em aberto</th><th>Ações</th></tr></thead><tbody>
         ${r.itens.map((d) => `<tr><td data-label="Foto"><span class="mini" data-foto="${esc(d.foto_path ?? '')}" aria-hidden="true">${esc(iniciais(d.nome_razao_social))}</span></td>
         <td data-label="Nome / razão social"><a href="#/devedores/${esc(d.id)}">${esc(d.nome_razao_social)}</a></td><td data-label="CPF/CNPJ">${esc(formatarDocumento(d.cpf_cnpj)) || '—'}</td>
@@ -78,13 +77,7 @@ export async function renderListaDevedores(raiz, { consulta = new URLSearchParam
   $('#f-status').addEventListener('change', (e) => { estado.status = e.target.value; mudou(); });
   $('#f-situacao').addEventListener('change', (e) => { estado.situacao = e.target.value; mudou(); });
   $('#f-ordem').addEventListener('change', (e) => { estado.ordem = e.target.value; mudou(); });
-  const painelFiltros = $('#filtros-clientes');
-  const botaoFiltros = $('#filtro-toggle');
-  botaoFiltros?.addEventListener('click', () => {
-    const aberto = painelFiltros.dataset.aberto === 'true';
-    painelFiltros.dataset.aberto = String(!aberto);
-    botaoFiltros.setAttribute('aria-expanded', String(!aberto));
-  });
+  const marcarFiltrosAtivos = instalarBotaoFiltros(el);
   $('#limpar').addEventListener('click', () => {
     Object.assign(estado, { q: '', status: '', situacao: '', ordem: 'nome_asc' });
     $('#busca').value = ''; $('#f-status').value = ''; $('#f-situacao').value = ''; $('#f-ordem').value = 'nome_asc'; mudou();
