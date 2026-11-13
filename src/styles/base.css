@@ -147,8 +147,9 @@ label.inline { display: inline-flex; align-items: center; margin: 0 28px 0 0; mi
 .barra, .list-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 0 0 22px; }
 .barra h2 { margin: 0; }
 .barra > input { flex: 1; margin: 0; max-width: 540px; }
-.search-field { position: relative; flex: 1; max-width: 580px; }
+.search-field { position: relative; flex: 1; max-width: 580px; margin-bottom: 0; }
 .search-field input { margin: 0; padding-left: 42px; }
+.list-toolbar .search-field input, .list-toolbar > .btn { min-height: 48px; }
 .search-field > .icon { position: absolute; left: 14px; top: 15px; color: var(--muted); }
 .filtros, .filter-bar { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; padding: 20px; border: 1px solid var(--borda); border-radius: var(--radius); background: var(--painel); margin-bottom: 24px; }
 .filtros label, .filter-bar label { margin: 0; flex: 1; min-width: 150px; }
@@ -301,7 +302,7 @@ dd { margin: 0; overflow-wrap: anywhere; }
   .filtros, .filter-bar { padding: 16px; gap: 14px; }
   .filtros label, .filter-bar label { min-width: 100%; }
   .filtro-toggle { display: inline-flex; }
-  .list-toolbar > .btn, .list-toolbar .filtro-toggle { min-height: 46px; }
+  .list-toolbar > .btn, .list-toolbar .filtro-toggle { min-height: 48px; }
   .filtros[data-aberto="false"] { display: none; }
   .grade { grid-template-columns: minmax(0, 1fr); gap: 0; }
   .form-panel { padding: 20px; }
