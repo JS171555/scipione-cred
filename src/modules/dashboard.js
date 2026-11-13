@@ -21,7 +21,7 @@ export async function renderDashboard(raiz, { admin }) {
     if (!el.isConnected) return;
     const nomes = await nomesPorId(recentes.map((r) => r.devedor_id));
     if (!el.isConnected) return;
-    const card = (rotulo, valor, ico, extra = '') => `<div class="card ${extra}"><span class="metric-icon">${icon(ico, 22)}</span><span class="rot" data-ui-copy>${esc(rotulo)}</span><strong>${esc(valor)}</strong></div>`;
+    const card = (rotulo, valor, ico, extra = '') => `<div class="card ${extra}"><div class="card-top"><span class="rot" data-ui-copy>${esc(rotulo)}</span><span class="metric-icon">${icon(ico, 22)}</span></div><strong>${esc(valor)}</strong></div>`;
     const centavos = (obj, campoC, campoDecimal) => {
       if (Number.isSafeInteger(obj?.[campoC])) return obj[campoC];
       if (obj?.[campoDecimal] != null && Number.isFinite(Number(obj[campoDecimal]))) return paraCentavos(obj[campoDecimal]);

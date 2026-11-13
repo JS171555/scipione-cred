@@ -148,6 +148,29 @@ const acoes1280=await page.$$eval('td[data-label="Ações"] .acoes-linha > *',el
 assert(new Set(acoes1280).size===1,'Botões de ação devem manter o mesmo tamanho em 1280');
 assert(await page.evaluate(()=>{const r=document.querySelector('#tabela .rolagem');return r.scrollWidth<=r.clientWidth+1;}),'Tabela de dívidas não deve rolar na horizontal em 1280');
 await page.setViewportSize({width:1440,height:1000});
+// Ícones de cards e de diálogos ficam centrados com o texto ao lado.
+for (const largura of [1440, 1190, 390]) {
+  await page.setViewportSize({ width: largura, height: 900 });
+  await page.evaluate(() => { window.__mockAdmin = true; });
+  await page.goto(`${origin}/#/`); await page.waitForSelector('.cards .card-top');
+  const desvios = await page.evaluate(() => [...document.querySelectorAll('.card')].map((c) => {
+    const rot = c.querySelector('.rot').getBoundingClientRect(); const ico = c.querySelector('.metric-icon').getBoundingClientRect();
+    return { rotulo: c.querySelector('.rot').textContent.trim(), desvio: Math.round((ico.top + ico.height / 2) - (rot.top + rot.height / 2)) };
+  }));
+  desvios.forEach(({ rotulo, desvio }) => assert(Math.abs(desvio) <= 1, `Ícone do card "${rotulo}" desalinhado em ${largura}px (${desvio}px)`));
+}
+await page.setViewportSize({ width: 1440, height: 1000 });
+await page.goto(`${origin}/#/devedores/${d.id}`); await page.waitForSelector('[data-acao="apagar-divida"]');
+await page.locator('[data-acao="apagar-divida"]').first().click();
+await page.waitForSelector('dialog[open]');
+const dialogo = await page.evaluate(() => {
+  const d = document.querySelector('dialog[open]');
+  const ico = d.querySelector('.dialog-head .icon').getBoundingClientRect(); const tit = d.querySelector('.dialog-head h2').getBoundingClientRect();
+  return { desvio: Math.round((ico.top + ico.height / 2) - (tit.top + tit.height / 2)), mesmaLinha: Math.round(ico.right) <= Math.round(tit.left) };
+});
+assert(Math.abs(dialogo.desvio) <= 1, `Ícone do diálogo desalinhado do título (${dialogo.desvio}px)`);
+assert(dialogo.mesmaLinha, 'Ícone do diálogo deve ficar ao lado do título');
+await page.keyboard.press('Escape');
 // Conversão de mídia: imagem vira WebP e PDF é reotimizado antes do upload.
 const midia=await page.evaluate(async()=>{
   const {prepararArquivo}=await import('/src/utils/midia.js');

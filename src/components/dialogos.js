@@ -21,7 +21,7 @@ function abrir(html, aoMontar) {
 }
 
 export function confirmar(mensagem, { confirmarTexto = 'Confirmar', perigo = false } = {}) {
-  return abrir(`<form method="dialog">${icon(perigo ? 'alert-circle' : 'shield-check', 24)}<h2 id="dialog-title">${perigo ? 'Confirmar alteração' : 'Antes de continuar'}</h2><p>${esc(mensagem)}</p>
+  return abrir(`<form method="dialog"><div class="dialog-head${perigo ? ' aviso' : ''}">${icon(perigo ? 'alert-circle' : 'shield-check', 22)}<h2 id="dialog-title">${perigo ? 'Confirmar alteração' : 'Antes de continuar'}</h2></div><p>${esc(mensagem)}</p>
     <div class="acoes"><button type="button" data-n class="sec">Cancelar</button><button type="button" data-s class="${perigo ? 'perigo' : ''}">${esc(confirmarTexto)}</button></div></form>`,
   (d, fechar) => {
     d.querySelector('[data-n]').onclick = () => fechar(false);

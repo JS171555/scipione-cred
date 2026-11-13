@@ -78,8 +78,8 @@ strong { font-weight: 600; }
 .card .rot { font-size: 11px; color: var(--muted); font-weight: 400; }
 .card strong { font: 500 30px/1.2 var(--font-body); font-variant-numeric: tabular-nums; letter-spacing: -.04em; overflow-wrap: anywhere; }
 .card.destaque strong { color: var(--ouro); }
-.metric-icon { position: absolute; top: 22px; right: 20px; color: var(--ouro); opacity: .7; }
-.card .rot { padding-right: 25px; }
+.metric-icon { display: inline-flex; flex-shrink: 0; color: var(--ouro); opacity: .7; }
+.card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 30px; }
 .financial-overview { border: 1px solid var(--borda); background: var(--painel); border-radius: var(--radius); padding: 28px; margin: 0 0 28px; }
 .financial-overview h2 { margin-top: 0; }
 .financial-hero { padding-bottom: 24px; }
@@ -151,7 +151,7 @@ label.inline { display: inline-flex; align-items: center; margin: 0 28px 0 0; mi
 .search-field { position: relative; flex: 1; max-width: 580px; margin-bottom: 0; }
 .search-field input { margin: 0; padding-left: 42px; }
 .list-toolbar .search-field input, .list-toolbar > .btn { min-height: 48px; }
-.search-field > .icon { position: absolute; left: 14px; top: 15px; color: var(--muted); }
+.search-field > .icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); }
 .filtros, .filter-bar { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; padding: 20px; border: 1px solid var(--borda); border-radius: var(--radius); background: var(--painel); margin-bottom: 24px; }
 .filtros label, .filter-bar label { margin: 0; flex: 1; min-width: 150px; }
 .filtro-toggle { position: relative; min-height: 48px; }
@@ -218,6 +218,11 @@ dd { margin: 0; overflow-wrap: anywhere; }
 .dialogo h2 { font: 500 28px var(--font-display); margin-top: 0; }
 .dialogo p { color: var(--muted); font-size: 13px; }
 .dialogo .acoes { margin-top: 26px; }
+.dialog-head { display: flex; align-items: center; gap: 12px; margin: 0 0 14px; }
+.dialog-head h2 { margin: 0; }
+.dialog-head .icon { flex-shrink: 0; color: var(--ouro); }
+.dialog-head.aviso .icon { color: var(--erro); }
+.dialog-head + p { margin-top: 0; }
 .empty-state, .error-state, .loading-state, .vazio { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 220px; padding: 34px 24px; color: var(--muted); background: var(--painel); border: 1px solid var(--borda); border-radius: var(--radius); }
 .empty-state > .icon { color: var(--ouro); margin-bottom: 16px; }
 .empty-state h3, .error-state h3 { margin: 12px 0 6px; color: var(--marfim); }
@@ -253,9 +258,8 @@ dd { margin: 0; overflow-wrap: anywhere; }
 @media (min-width: 1440px) {
   .cards { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .card { padding: 22px 18px; }
-  .card .rot { min-height: 34px; }
+  .card-top { min-height: 34px; }
   .card strong { font-size: 27px; }
-  .metric-icon { top: 19px; right: 14px; }
 }
 @media (max-width: 1190px) {
   .sidebar { width: 210px; }
@@ -300,9 +304,9 @@ dd { margin: 0; overflow-wrap: anywhere; }
   .atalhos .btn { padding: 12px 10px; font-size: 11px; }
   .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 20px; }
   .card { padding: 18px 14px; gap: 12px; }
-  .card .rot { font-size: 10px; min-height: 28px; }
+  .card .rot { font-size: 10px; }
+  .card-top { min-height: 28px; }
   .card strong { font-size: 25px; }
-  .metric-icon { right: 13px; top: 18px; }
   .financial-overview { padding: 22px; }
   .financial-breakdown { grid-template-columns: 1fr; gap: 18px; }
   .financial-breakdown > div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
@@ -362,7 +366,6 @@ dd { margin: 0; overflow-wrap: anywhere; }
   .card { padding: 16px 12px; }
   .card strong { font-size: 22px; }
   .metric-icon { display: none; }
-  .card .rot { padding-right: 0; }
   .resumo { grid-template-columns: 1fr; }
   .auth-story { padding: 24px 20px; }
 }
@@ -450,9 +453,9 @@ dd { margin: 0; overflow-wrap: anywhere; }
 .financial-breakdown dd { margin-top: 6px; font-size: 20px; }
 .cards { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
 .card { padding: 15px 16px 17px; gap: 6px; }
-.card .rot { font-size: 10.5px; line-height: 1.35; min-height: 0; padding-right: 30px; }
+.card .rot { font-size: 10.5px; line-height: 1.35; }
 .card strong { font-size: 25px; }
-.metric-icon { top: 13px; right: 13px; opacity: .6; }
+.metric-icon { opacity: .6; }
 .dashboard-grid { grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); gap: 16px; align-items: stretch; }
 .dashboard-grid .panel { display: flex; flex-direction: column; }
 .dashboard-grid .panel-header { margin-bottom: 12px; }
@@ -463,7 +466,6 @@ dd { margin: 0; overflow-wrap: anywhere; }
 @media (min-width: 1440px) {
   .cards { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .card strong { font-size: 23px; }
-  .card .rot { padding-right: 26px; }
 }
 @media (max-width: 1023px) {
   .financial-overview { grid-template-columns: 1fr; gap: 16px; padding: 20px; }
