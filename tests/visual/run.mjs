@@ -71,9 +71,11 @@ for(const width of widths){
       assert(alturas.length===1,`Botões dos cards de dívidas devem ter a mesma altura em ${width}px: ${alturas.join(', ')}`);
     }
     if(['dashboard','login','clientes','pagamento','perfil'].includes(name)&&[390,1440].includes(width)) {
-      await page.evaluate(()=>{const badge=document.createElement('div');badge.id='test-only-label';badge.textContent='VALIDAÇÃO VISUAL · DADOS SINTÉTICOS';badge.style.cssText='position:fixed;bottom:80px;right:8px;z-index:100;background:#171717;color:#E8DFC9;border:1px solid #34302A;border-radius:4px;padding:5px 8px;font:9px sans-serif;pointer-events:none';document.body.append(badge);});
+      // O rótulo de dados sintéticos é o padrão; VISUAL_NO_LABEL=1 gera as capturas limpas da documentação.
+      const rotular = !process.env.VISUAL_NO_LABEL;
+      if (rotular) await page.evaluate(()=>{const badge=document.createElement('div');badge.id='test-only-label';badge.textContent='VALIDAÇÃO VISUAL · DADOS SINTÉTICOS';badge.style.cssText='position:fixed;bottom:80px;right:8px;z-index:100;background:#171717;color:#E8DFC9;border:1px solid #34302A;border-radius:4px;padding:5px 8px;font:9px sans-serif;pointer-events:none';document.body.append(badge);});
       await page.screenshot({path:`${out}/${name}-${width}.png`,fullPage:true});
-      await page.locator('#test-only-label').evaluate(el=>el.remove());
+      if (rotular) await page.locator('#test-only-label').evaluate(el=>el.remove());
     }
     console.log(`Visual ${name} ${width}px: ${overflow?'OVERFLOW':'OK'}`);
   }

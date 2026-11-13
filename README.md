@@ -38,11 +38,36 @@ Isso resolve o problema central de um controle de crédito manual: planilhas div
 
 ## Capturas de tela
 
-| Visão geral | Login |
-| :---: | :---: |
-| ![Dashboard](docs/previews/dashboard-desktop.png) | ![Login](docs/previews/login-desktop.png) |
-| **Clientes** | **No celular** |
-| ![Clientes](docs/previews/clientes-desktop.png) | ![Mobile](docs/previews/dashboard-mobile.png) |
+<table>
+  <tr>
+    <td align="center" valign="top" width="33%">
+      <img src="docs/previews/dashboard-desktop.png" width="400" alt="Painel com indicadores financeiros" /><br />
+      <sub><b>Painel</b></sub>
+    </td>
+    <td align="center" valign="top" width="33%">
+      <img src="docs/previews/clientes-desktop.png" width="400" alt="Lista de clientes com filtros" /><br />
+      <sub><b>Clientes</b></sub>
+    </td>
+    <td align="center" valign="top" width="33%">
+      <img src="docs/previews/login-desktop.png" width="400" alt="Tela de acesso" /><br />
+      <sub><b>Acesso</b></sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" valign="top" width="33%">
+      <img src="docs/previews/dashboard-mobile.png" width="180" alt="Painel no celular" /><br />
+      <sub>Painel no celular</sub>
+    </td>
+    <td align="center" valign="top" width="33%">
+      <img src="docs/previews/clientes-mobile.png" width="180" alt="Clientes no celular" /><br />
+      <sub>Clientes no celular</sub>
+    </td>
+    <td align="center" valign="top" width="33%">
+      <img src="docs/previews/login-mobile.png" width="180" alt="Acesso no celular" /><br />
+      <sub>Acesso no celular</sub>
+    </td>
+  </tr>
+</table>
 
 ## Funcionalidades
 
