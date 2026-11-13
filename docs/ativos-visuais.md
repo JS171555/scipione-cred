@@ -7,18 +7,9 @@ Fontes oficiais verificadas em 12 de novembro de 2026: https://fonts.google.com/
 Os ícones operacionais são Lucide, dependência já presente no projeto. Não são utilizadas fotografias de clientes reais, imagens de banco de imagens ou ilustrações decorativas.
 
 ## Marca
-- Origem: fotografia do chapéu e da gravata enviada pelo cliente (`D_NQ_NP_642061-MLA104241562614_012026-O-fantasia-gangster-mafia-chapeu-suspensorio-gravata-3pcs.webp`, 500 × 500 px), arquivada em `tools/origem/chapeu.webp`.
-- Tratamento: recorte quadrado sobre o chapéu e a gravata, leve vinheta para fundir as bordas ao tema escuro e aro duplo (escuro por fora, dourado por dentro) formando um medalhão circular. A fotografia não é redesenhada nem convertida em vetor.
+- Origem: arte do chapéu dourado enviada pelo cliente (`file_000000004c20820eae554071b7381120.png`, 1254 × 1254 px), arquivada em `tools/origem/chapeu.png`.
+- Tratamento: nenhum além do redimensionamento. A arte é usada inteira, quadrada, com a moldura que já faz parte da própria imagem — sem aro, sem vinheta, sem recorte circular e sem sombra adicionados pelo sistema.
 - Geração: `python3 tools/marca.py` grava todos os derivados a partir do arquivo original (requer apenas Pillow).
-- Aplicação na interface: medalhão de 44 px na barra lateral, 30 px no cabeçalho mobile e 60 px no painel do login, sempre com o texto alternativo vazio porque a marca é decorativa e o nome está escrito ao lado.
-- Instalação (PWA): `icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (180 px) e `favicon-32.png` são a fotografia inteira, quadrada, sem aro e sem recorte redondo. O ícone de 512 px é declarado como `any maskable`, então o sistema aplica a própria máscara sobre a foto.
-- Licença: a origem e o direito de uso da imagem são de responsabilidade do cliente; o arquivo não é redistribuído fora deste projeto.
-
-## Fotografia do login
-
-- Arquivo recebido: `360_F_376877408_tahYXzHkO7ZgLERw43ErDjcIVQtyTWYC.jpg` (510 × 360 px), fornecido pelo cliente.
-- Tratamento: restauração e ampliação por IA preservando o conteúdo original, seguida de leve nitidez e conversão para WebP.
-- Derivados publicados: `public/images/login-desk-1492.webp` (desktop, painel lateral, 1280 × 1280 px) e `public/images/login-desk-800.webp` (mobile, faixa superior, 800 × 516 px).
-- Conteúdo: ambos são a mesma fotografia da mesa de trabalho, sem composição ou retrato adicional. O recorte quadrado do desktop ocupa o painel lateral e o recorte horizontal de 800 px alimenta a faixa superior mobile.
-- Uso: decorativo, servido como `alt=""` e coberto por gradiente para manter o contraste do texto.
+- Aplicação na interface: `public/brand/marca-96.png` e `marca-192.png` formam o ícone exibido ao lado do nome na barra lateral (44 px), no cabeçalho mobile (30 px) e no painel do login (60 px). O texto alternativo é vazio porque a marca é decorativa e o nome está escrito ao lado.
+- Instalação (PWA): `public/icons/icon-192.png`, `icon-512.png`, `apple-touch-icon.png` (180 px) e `favicon-32.png` recebem a mesma arte, sem borda e sem arredondamento. O ícone de 512 px é declarado como `any maskable`, então o sistema aplica a própria máscara sobre a imagem.
 - Licença: a origem e o direito de uso da imagem são de responsabilidade do cliente; o arquivo não é redistribuído fora deste projeto.

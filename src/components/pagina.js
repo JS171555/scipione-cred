@@ -7,7 +7,7 @@ import { adaptarTabelas } from './tabelas.js';
 
 let adminAtual = null;
 export const definirAdminPagina = (admin) => { adminAtual = admin; };
-const marcaImagem = (lado) => `<img class="brand-mark" src="/brand/selo-96.png" srcset="/brand/selo-96.png 1x, /brand/selo-192.png 2x" width="${lado}" height="${lado}" alt="" aria-hidden="true" decoding="async">`;
+const marcaImagem = (lado) => `<img class="brand-mark" src="/brand/marca-96.png" srcset="/brand/marca-96.png 1x, /brand/marca-192.png 2x" width="${lado}" height="${lado}" alt="" aria-hidden="true" decoding="async">`;
 export const marca = () => `${marcaImagem(44)}<span class="brand-name">SCIPIONE<span>CRED</span></span>`;
 const links = [['/', 'Dashboard', 'layout-dashboard'], ['/devedores', 'Clientes', 'users'], ['/dividas', 'Dívidas', 'receipt-text'], ['/pagamentos', 'Pagamentos', 'wallet']];
 function ativo(href) {

@@ -36,7 +36,7 @@ strong { font-weight: 600; }
 .app-shell { min-height: 100dvh; }
 .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 20; width: var(--sidebar-width); padding: 34px 20px 20px; background: #111110; border-right: 1px solid var(--borda); display: flex; flex-direction: column; transition: width var(--transition); }
 .brand { display: flex; align-items: center; gap: 14px; color: var(--marfim); text-decoration: none; padding: 0 6px; margin-bottom: 34px; }
-.brand-mark { flex-shrink: 0; width: 44px; height: 44px; border-radius: 50%; filter: drop-shadow(0 6px 16px rgb(0 0 0 / 45%)); }
+.brand-mark { flex-shrink: 0; width: 44px; height: 44px; }
 .brand-name { display: flex; flex-direction: column; font: 23px/1.05 var(--font-display); letter-spacing: .06em; }
 .brand-name > span { font: 10px/2 var(--font-body); letter-spacing: .43em; color: var(--ouro); }
 .sidebar-nav { display: flex; flex-direction: column; gap: 7px; }

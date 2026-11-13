@@ -39,7 +39,7 @@ let errors=[];
 page.on('pageerror', e=>errors.push(e.message));
 // A marca é um ativo da pasta public/brand: os ícones da PWA são conferidos no tamanho final.
 const dimensoesPng = (buffer) => ({ largura: buffer.readUInt32BE(16), altura: buffer.readUInt32BE(20) });
-for (const [arquivo, lado] of [['public/brand/selo-96.png', 96], ['public/brand/selo-192.png', 192], ['public/icons/icon-192.png', 192], ['public/icons/icon-512.png', 512], ['public/icons/apple-touch-icon.png', 180]]) {
+for (const [arquivo, lado] of [['public/brand/marca-96.png', 96], ['public/brand/marca-192.png', 192], ['public/icons/icon-192.png', 192], ['public/icons/icon-512.png', 512], ['public/icons/apple-touch-icon.png', 180]]) {
   const buffer = await readFile(arquivo).catch(() => null);
   assert(buffer, `Ativo de marca ausente: ${arquivo}`);
   const { largura, altura } = dimensoesPng(buffer);
